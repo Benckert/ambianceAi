@@ -13,50 +13,53 @@ export const PromptInput = () => {
   const addLayer = useSoundscapeStore((state) => state.addLayer);
 
   const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!prompt.trim()) return;
+    e.preventDefault()
 
-    setIsLoading(true);
-    setError(null);
-    setResults([]);
+    if (!prompt.trim()) return
+
+    setIsLoading(true)
+    setError(null)
+    setResults([])
 
     try {
       const response = await fetch(
         `/api/freesound?query=${encodeURIComponent(prompt)}`
-      );
-      
+      )
+
       if (!response.ok) {
-        throw new Error('Failed to fetch sounds');
+        throw new Error("Failed to fetch sounds")
       }
 
-      const data = await response.json();
-      setResults(data.results || []);
-      
+      const data = await response.json()
+      setResults(data.results || [])
+
       if (data.results.length === 0) {
-        setError('No loopable sounds found. Try a different search term.');
+        setError("No sounds found. Try a different search term.")
       }
     } catch (err) {
-      setError('Failed to search for sounds. Please try again.');
-      console.error(err);
+      setError("Failed to search for sounds. Please try again.")
+      console.error(err)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   const handleAddLayer = (clip: FreeSoundClip) => {
     addLayer({
       id: `layer-${clip.id}-${Date.now()}`,
-      url: clip.previews['preview-hq-mp3'],
+      url: clip.previews["preview-hq-mp3"],
       volume: 0.5,
       loop: true,
       name: clip.name,
-    });
-  };
+    })
+  }
 
   return (
     <div className="space-y-4">
-      <form onSubmit={handleSearch} className="flex gap-2">
+      <form
+        onSubmit={handleSearch}
+        className="flex gap-2"
+      >
         <input
           type="text"
           value={prompt}
@@ -72,7 +75,10 @@ export const PromptInput = () => {
         >
           {isLoading ? (
             <>
-              <Loader2 size={20} className="animate-spin" />
+              <Loader2
+                size={20}
+                className="animate-spin"
+              />
               Searching...
             </>
           ) : (
@@ -93,33 +99,47 @@ export const PromptInput = () => {
       {results.length > 0 && (
         <div className="space-y-2">
           <h3 className="text-sm font-medium text-gray-400">
-            Found {results.length} loopable sound{results.length !== 1 ? 's' : ''}
+            Found {results.length} sound{results.length !== 1 ? "s" : ""}{" "}
+            (loop-tagged shown first)
           </h3>
           <div className="max-h-64 overflow-y-auto space-y-2">
-            {results.map((clip) => (
-              <div
-                key={clip.id}
-                className="flex items-center justify-between p-3 bg-gray-800 rounded-lg hover:bg-gray-750 transition-colors"
-              >
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-white truncate">
-                    {clip.name}
-                  </p>
-                  <p className="text-xs text-gray-400">
-                    {clip.duration.toFixed(1)}s
-                  </p>
-                </div>
-                <button
-                  onClick={() => handleAddLayer(clip)}
-                  className="px-4 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors ml-3"
+            {results.map((clip) => {
+              const isLoopTagged = clip.tags.some((tag: string) =>
+                tag.toLowerCase().includes("loop")
+              )
+
+              return (
+                <div
+                  key={clip.id}
+                  className="flex items-center justify-between p-3 bg-gray-800 rounded-lg hover:bg-gray-750 transition-colors"
                 >
-                  Add Layer
-                </button>
-              </div>
-            ))}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-medium text-white truncate">
+                        {clip.name}
+                      </p>
+                      {isLoopTagged && (
+                        <span className="px-2 py-0.5 text-xs bg-green-600 text-white rounded">
+                          Loop
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-400">
+                      {clip.duration.toFixed(1)}s
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => handleAddLayer(clip)}
+                    className="px-4 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors ml-3"
+                  >
+                    Add Layer
+                  </button>
+                </div>
+              )
+            })}
           </div>
         </div>
       )}
     </div>
-  );
+  )
 };
