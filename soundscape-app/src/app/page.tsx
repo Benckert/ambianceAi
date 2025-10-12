@@ -2,7 +2,7 @@
 
 import { SoundscapePlayer } from "@/components/SoundscapePlayer";
 import { LayersList } from "@/components/LayerControl";
-import { PromptInput } from "@/components/PromptInput";
+import { AIPromptInput } from "@/components/AIPromptInput"
 import { useSoundscapeStore } from "@/hooks/useSoundscapeStore";
 import { Play, Pause, RotateCcw } from "lucide-react";
 
@@ -13,21 +13,21 @@ export default function Home() {
   const layers = useSoundscapeStore((state) => state.layers);
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+    <main className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900">
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold text-white mb-4">
-            🎵 Soundscape Creator
+          <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+            ✨ AI Soundscape Generator
           </h1>
           <p className="text-gray-400 text-lg">
-            Create ambient soundscapes using loopable sounds from FreeSound
+            Describe your perfect ambience and let AI create it
           </p>
         </div>
 
-        {/* Search Input */}
+        {/* AI Input */}
         <div className="mb-8">
-          <PromptInput />
+          <AIPromptInput />
         </div>
 
         {/* Control Panel */}

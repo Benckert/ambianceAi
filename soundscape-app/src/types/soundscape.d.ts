@@ -29,3 +29,21 @@ export interface FreeSoundClip {
   duration: number;
   tags: string[];
 }
+
+export interface AILayerSpec {
+  searchQuery: string
+  category: "background" | "midground" | "foreground"
+  volume: number
+  description: string
+}
+
+export interface AISoundscapeStructure {
+  layers: AILayerSpec[]
+  mixingNotes: string
+}
+
+export interface GeneratedSoundscape {
+  success: boolean
+  soundscape: AISoundscapeStructure
+  keywords: string
+}
