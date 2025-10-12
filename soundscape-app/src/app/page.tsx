@@ -76,11 +76,21 @@ export default function Home() {
             How to use:
           </h3>
           <ol className="list-decimal list-inside space-y-2 text-gray-300">
-            <li>Search for loopable sounds (e.g., "rain", "ocean waves", "forest ambiance")</li>
+            <li>
+              Search for loopable sounds (e.g., "rain", "ocean waves", "forest
+              ambiance")
+            </li>
             <li>Add multiple layers to create your perfect soundscape</li>
             <li>Adjust the volume of each layer to balance the mix</li>
             <li>Press Play to start your ambient experience</li>
           </ol>
+          <div className="mt-4 pt-4 border-t border-blue-800/50">
+            <p className="text-sm text-gray-400">
+              💡 <strong>Tip:</strong> Shorter sounds (under 10s) with the green
+              "Loop" badge typically loop most seamlessly. Layers fade in/out
+              smoothly when added or removed.
+            </p>
+          </div>
         </div>
 
         {/* Footer */}
@@ -102,5 +112,5 @@ export default function Home() {
       {/* Audio Player Component (no UI) */}
       <SoundscapePlayer />
     </main>
-  );
+  )
 }
