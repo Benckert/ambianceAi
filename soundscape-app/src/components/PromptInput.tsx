@@ -51,6 +51,7 @@ export const PromptInput = () => {
       volume: 0.5,
       loop: true,
       name: clip.name,
+      duration: clip.duration, // Pass duration for master loop scheduling
     })
   }
 

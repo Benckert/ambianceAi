@@ -1,9 +1,10 @@
 export interface Layer {
-  id: string;
-  url: string;
-  volume: number;
-  loop: boolean;
-  name?: string;
+  id: string
+  url: string
+  volume: number
+  loop: boolean
+  name?: string
+  duration?: number // Duration in seconds
 }
 
 export interface SoundscapeState {

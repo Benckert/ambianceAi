@@ -86,9 +86,11 @@ export default function Home() {
           </ol>
           <div className="mt-4 pt-4 border-t border-blue-800/50">
             <p className="text-sm text-gray-400">
-              💡 <strong>Tip:</strong> Shorter sounds (under 10s) with the green
-              "Loop" badge typically loop most seamlessly. Layers fade in/out
-              smoothly when added or removed.
+              💡 <strong>Master Loop System:</strong> Your soundscape plays in a
+              30-second cycle with natural variation. Sounds are distributed
+              evenly with random timing (±1.5s) to create an organic,
+              non-repetitive atmosphere. Mix different sound durations for best
+              results!
             </p>
           </div>
         </div>
