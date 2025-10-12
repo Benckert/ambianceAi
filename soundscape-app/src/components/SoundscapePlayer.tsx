@@ -128,14 +128,18 @@ export const SoundscapePlayer = () => {
     // Remove Howl instances for layers that no longer exist
     howlsRef.current.forEach((howl, id) => {
       if (!currentLayerIds.has(id)) {
-        // Fade out before removing
+        // Fade out before removing (layer already gone from UI)
         if (howl.playing()) {
           const currentVol = howl.volume()
+          // Start fade to 0
           howl.fade(currentVol, 0, FADE_DURATION)
+          // Clean up after fade completes
           setTimeout(() => {
+            howl.stop()
             howl.unload()
           }, FADE_DURATION)
         } else {
+          // Not playing, clean up immediately
           howl.unload()
         }
         howlsRef.current.delete(id)
@@ -148,29 +152,34 @@ export const SoundscapePlayer = () => {
       let howl = howlsRef.current.get(layer.id)
 
       if (!howl) {
-        // Create new Howl instance
+        // Create new Howl instance with target volume immediately
+        const targetVolume = layer.isMuted ? 0 : layer.volume
+
         howl = new Howl({
           src: [layer.url],
           loop: false, // Don't auto-loop, we'll schedule plays manually
-          volume: 0, // Start at 0 for fade-in
+          volume: targetVolume, // Set volume immediately (no fade)
           html5: false, // Use Web Audio API for gapless looping
           preload: true, // Preload audio for seamless playback
           format: ["mp3"], // Specify format for better performance
         })
         howlsRef.current.set(layer.id, howl)
 
-        // Fade in the volume
-        setTimeout(() => {
-          howl?.fade(0, layer.volume, FADE_DURATION)
-        }, 100)
-
         previousVolumesRef.current.set(layer.id, layer.volume)
       } else {
-        // Update volume with fade if changed
+        // Update volume instantly (no crossfade)
         const previousVolume = previousVolumesRef.current.get(layer.id)
+        const effectiveVolume = layer.isMuted ? 0 : layer.volume
+
         if (previousVolume !== undefined && previousVolume !== layer.volume) {
-          howl.fade(previousVolume, layer.volume, 200) // Quick fade for volume changes
+          howl.volume(effectiveVolume) // Instant volume change
           previousVolumesRef.current.set(layer.id, layer.volume)
+        }
+
+        // Update volume based on mute state change
+        const currentHowlVolume = howl.volume()
+        if (currentHowlVolume !== effectiveVolume) {
+          howl.volume(effectiveVolume)
         }
       }
     })

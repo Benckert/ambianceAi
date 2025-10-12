@@ -112,15 +112,18 @@ export const PromptInput = () => {
               return (
                 <div
                   key={clip.id}
-                  className="flex items-center justify-between p-3 bg-gray-800 rounded-lg hover:bg-gray-750 transition-colors"
+                  className="flex items-center justify-between gap-3 p-3 bg-gray-800 rounded-lg hover:bg-gray-750 transition-colors"
                 >
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <p className="text-sm font-medium text-white truncate">
+                    <div className="flex items-center gap-2 mb-1">
+                      <p
+                        className="text-sm font-medium text-white truncate flex-1 min-w-0"
+                        title={clip.name}
+                      >
                         {clip.name}
                       </p>
                       {isLoopTagged && (
-                        <span className="px-2 py-0.5 text-xs bg-green-600 text-white rounded">
+                        <span className="px-2 py-0.5 text-xs bg-green-600 text-white rounded flex-shrink-0">
                           Loop
                         </span>
                       )}
@@ -131,7 +134,7 @@ export const PromptInput = () => {
                   </div>
                   <button
                     onClick={() => handleAddLayer(clip)}
-                    className="px-4 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors ml-3"
+                    className="px-4 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors flex-shrink-0"
                   >
                     Add Layer
                   </button>

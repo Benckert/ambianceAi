@@ -5,16 +5,18 @@ export interface Layer {
   loop: boolean
   name?: string
   duration?: number // Duration in seconds
+  isMuted?: boolean // Mute state
 }
 
 export interface SoundscapeState {
-  layers: Layer[];
-  isPlaying: boolean;
-  addLayer: (layer: Layer) => void;
-  setLayerVolume: (id: string, volume: number) => void;
-  removeLayer: (id: string) => void;
-  togglePlayback: () => void;
-  reset: () => void;
+  layers: Layer[]
+  isPlaying: boolean
+  addLayer: (layer: Layer) => void
+  setLayerVolume: (id: string, volume: number) => void
+  toggleLayerMute: (id: string) => void
+  removeLayer: (id: string) => void
+  togglePlayback: () => void
+  reset: () => void
 }
 
 export interface FreeSoundClip {
