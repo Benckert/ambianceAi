@@ -21,6 +21,7 @@ export const SoundscapePlayer = () => {
   const scheduledPlaysRef = useRef<Map<string, ScheduledPlay>>(new Map())
   const masterLoopIntervalRef = useRef<NodeJS.Timeout | null>(null)
   const layerIdsRef = useRef<string[]>([]) // Track layer IDs to detect changes
+  const previousIsPlayingRef = useRef<boolean>(false) // Track previous play state
 
   // Function to schedule sound plays within the master loop
   const scheduleLayerInMasterLoop = (layer: any, howl: Howl) => {
@@ -154,6 +155,10 @@ export const SoundscapePlayer = () => {
       currentLayerIds.length !== previousLayerIds.length ||
       !currentLayerIds.every((id, idx) => id === previousLayerIds[idx])
 
+    // Check if play state changed
+    const playStateChanged = isPlaying !== previousIsPlayingRef.current
+    previousIsPlayingRef.current = isPlaying
+
     // Remove Howl instances for layers that no longer exist
     howlsRef.current.forEach((howl, id) => {
       if (!currentLayerIds.includes(id)) {
@@ -197,8 +202,8 @@ export const SoundscapePlayer = () => {
       }
     })
 
-    // Only restart master loop if layers were added/removed or play state changed
-    if (layersChanged) {
+    // Restart master loop if layers changed OR play state changed
+    if (layersChanged || playStateChanged) {
       layerIdsRef.current = currentLayerIds
 
       if (isPlaying && layers.length > 0) {
