@@ -50,15 +50,15 @@ export const LayerControl = ({ layer }: LayerControlProps) => {
     <div className="flex items-center gap-3 p-4 bg-gray-800 rounded-lg">
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between mb-2 gap-2">
-          <span 
+          <span
             className="text-sm font-medium text-white truncate flex-1 min-w-0"
-            title={layer.name || 'Unnamed Layer'}
+            title={layer.name || "Unnamed Layer"}
           >
             {displayName}
           </span>
           <button
             onClick={() => removeLayer(layer.id)}
-            className="text-gray-400 hover:text-red-500 transition-colors flex-shrink-0"
+            className="text-gray-400 hover:text-red-500 transition-colors flex-shrink-0 cursor-pointer"
             aria-label="Remove layer"
           >
             <X size={16} />
@@ -71,7 +71,10 @@ export const LayerControl = ({ layer }: LayerControlProps) => {
             aria-label={isMuted ? "Unmute layer" : "Mute layer"}
           >
             {isMuted ? (
-              <VolumeX size={20} className="text-red-400" />
+              <VolumeX
+                size={20}
+                className="text-red-400"
+              />
             ) : layer.volume === 0 ? (
               <VolumeX size={20} />
             ) : (
@@ -93,7 +96,7 @@ export const LayerControl = ({ layer }: LayerControlProps) => {
         </div>
       </div>
     </div>
-  );
+  )
 };
 
 export const LayersList = () => {

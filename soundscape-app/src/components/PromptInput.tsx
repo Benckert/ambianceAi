@@ -110,7 +110,7 @@ export const PromptInput = () => {
         <button
           type="submit"
           disabled={isLoading || !prompt.trim()}
-          className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-xl hover:from-cyan-600 hover:to-blue-600 disabled:from-slate-700 disabled:to-slate-700 disabled:cursor-not-allowed transition-all flex items-center gap-2 font-medium shadow-lg shadow-cyan-500/25 disabled:shadow-none"
+          className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-xl hover:from-cyan-600 hover:to-blue-600 disabled:from-slate-700 disabled:to-slate-700 disabled:cursor-not-allowed cursor-pointer transition-all flex items-center gap-2 font-medium shadow-lg shadow-cyan-500/25 disabled:shadow-none"
         >
           {isLoading ? (
             <>
@@ -176,7 +176,7 @@ export const PromptInput = () => {
                         {clip.name}
                       </p>
                       {isLoopTagged && (
-                        <span className="px-2 py-0.5 text-xs bg-emerald-500/90 text-white rounded-md flex-shrink-0 font-medium">
+                        <span className="px-2 py-0.5 text-xs bg-emerald-500/90 text-white rounded-md flex-shrink-0 font-medium cursor-default">
                           Loop
                         </span>
                       )}
@@ -197,7 +197,7 @@ export const PromptInput = () => {
                         ? handleRemoveLayer(clip)
                         : handleAddLayer(clip)
                     }
-                    className={`px-4 py-2 text-sm rounded-lg flex-shrink-0 font-medium min-w-[100px] group ${
+                    className={`px-4 py-2 text-sm rounded-lg flex-shrink-0 font-medium min-w-[100px] group cursor-pointer ${
                       isAlreadyAdded
                         ? "bg-slate-600 text-white/60 hover:bg-gradient-to-r hover:from-rose-500 hover:to-pink-500 hover:text-white hover:shadow-md hover:shadow-rose-500/20"
                         : "bg-gradient-to-r from-cyan-500 to-blue-500 text-white hover:from-cyan-600 hover:to-blue-600 shadow-md shadow-cyan-500/20 transition-all"

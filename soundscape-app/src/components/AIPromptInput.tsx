@@ -238,7 +238,7 @@ export const AIPromptInput = ({ onModeChange }: AIPromptInputProps) => {
           <button
             type="button"
             onClick={() => setUseSimpleMode(!useSimpleMode)}
-            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer ${
               useSimpleMode ? "bg-emerald-500" : "bg-indigo-500"
             }`}
           >
@@ -299,7 +299,7 @@ export const AIPromptInput = ({ onModeChange }: AIPromptInputProps) => {
         <button
           type="submit"
           disabled={isGenerating || !keywords.trim()}
-          className={`px-6 py-3 rounded-xl text-white font-medium transition-all flex items-center gap-2 shadow-lg ${
+          className={`px-6 py-3 rounded-xl text-white font-medium transition-all flex items-center gap-2 shadow-lg cursor-pointer ${
             useSimpleMode
               ? "bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 shadow-emerald-500/25"
               : "bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 shadow-indigo-500/25"

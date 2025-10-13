@@ -45,7 +45,7 @@ export default function Home() {
           <div className="inline-flex bg-slate-800/80 backdrop-blur-sm rounded-xl p-1.5 border border-slate-700/50">
             <button
               onClick={() => setUseAI(false)}
-              className={`px-6 py-2.5 rounded-lg transition-all flex items-center gap-2 font-medium ${
+              className={`px-6 py-2.5 rounded-lg transition-all flex items-center gap-2 font-medium cursor-pointer ${
                 !useAI
                   ? "bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-lg shadow-cyan-500/25"
                   : "text-slate-400 hover:text-slate-200"
@@ -56,7 +56,7 @@ export default function Home() {
             </button>
             <button
               onClick={() => setUseAI(true)}
-              className={`px-6 py-2.5 rounded-lg transition-all flex items-center gap-2 font-medium ${
+              className={`px-6 py-2.5 rounded-lg transition-all flex items-center gap-2 font-medium cursor-pointer ${
                 useAI
                   ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg shadow-indigo-500/25"
                   : "text-slate-400 hover:text-slate-200"
@@ -87,7 +87,7 @@ export default function Home() {
               <button
                 onClick={togglePlayback}
                 disabled={layers.length === 0}
-                className="px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl hover:from-emerald-600 hover:to-teal-600 disabled:from-slate-700 disabled:to-slate-700 disabled:cursor-not-allowed transition-all flex items-center gap-2 font-medium shadow-lg shadow-emerald-500/20 disabled:shadow-none"
+                className="px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl hover:from-emerald-600 hover:to-teal-600 disabled:from-slate-700 disabled:to-slate-700 disabled:cursor-not-allowed cursor-pointer transition-all flex items-center gap-2 font-medium shadow-lg shadow-emerald-500/20 disabled:shadow-none"
               >
                 {isPlaying ? (
                   <>
@@ -104,7 +104,7 @@ export default function Home() {
               <button
                 onClick={reset}
                 disabled={layers.length === 0}
-                className="px-6 py-3 bg-gradient-to-r from-rose-500 to-pink-500 text-white rounded-xl hover:from-rose-600 hover:to-pink-600 disabled:from-slate-700 disabled:to-slate-700 disabled:cursor-not-allowed transition-all flex items-center gap-2 shadow-lg shadow-rose-500/20 disabled:shadow-none"
+                className="px-6 py-3 bg-gradient-to-r from-rose-500 to-pink-500 text-white rounded-xl hover:from-rose-600 hover:to-pink-600 disabled:from-slate-700 disabled:to-slate-700 disabled:cursor-not-allowed cursor-pointer transition-all flex items-center gap-2 shadow-lg shadow-rose-500/20 disabled:shadow-none"
                 title="Clear all layers"
               >
                 <RotateCcw size={20} />
