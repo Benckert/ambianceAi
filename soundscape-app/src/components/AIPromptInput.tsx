@@ -172,14 +172,14 @@ export const AIPromptInput = ({ onModeChange }: AIPromptInputProps) => {
   return (
     <div className="space-y-4">
       {/* Mode Toggle */}
-      <div className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg border border-gray-700">
+      <div className="flex items-center justify-between p-3 bg-slate-800/60 backdrop-blur-sm rounded-xl border border-slate-700/50">
         <div className="flex items-center gap-3">
-          <span className="text-sm text-gray-400">Generation Mode:</span>
+          <span className="text-sm text-slate-400">Generation Mode:</span>
           <button
             type="button"
             onClick={() => setUseSimpleMode(!useSimpleMode)}
             className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-              useSimpleMode ? "bg-green-600" : "bg-purple-600"
+              useSimpleMode ? "bg-emerald-500" : "bg-indigo-500"
             }`}
           >
             <span
@@ -192,7 +192,7 @@ export const AIPromptInput = ({ onModeChange }: AIPromptInputProps) => {
             {useSimpleMode ? "🎨 Template (Free)" : "🤖 AI (Requires Credits)"}
           </span>
         </div>
-        <span className="text-xs text-gray-500">
+        <span className="text-xs text-slate-500">
           {useSimpleMode
             ? "Uses predefined templates"
             : "Uses OpenAI GPT-3.5 (cached & rate-limited)"}
@@ -201,14 +201,14 @@ export const AIPromptInput = ({ onModeChange }: AIPromptInputProps) => {
 
       {/* Rate Limit Info Banner */}
       {!useSimpleMode && (
-        <div className="p-3 bg-yellow-900/20 border border-yellow-800/50 rounded-lg">
+        <div className="p-3 bg-amber-950/30 border border-amber-800/50 rounded-xl backdrop-blur-sm">
           <div className="flex items-start gap-2">
-            <span className="text-yellow-400 text-sm">⚡</span>
+            <span className="text-amber-400 text-sm">⚡</span>
             <div className="flex-1">
-              <p className="text-xs text-yellow-300 font-medium mb-1">
+              <p className="text-xs text-amber-300 font-medium mb-1">
                 AI Mode Optimizations Active:
               </p>
-              <ul className="text-xs text-yellow-400/80 space-y-0.5 list-disc list-inside">
+              <ul className="text-xs text-amber-400/80 space-y-0.5 list-disc list-inside">
                 <li>Responses cached for 24h (instant re-use)</li>
                 <li>Rate limited to 2 requests/min (stays under 3 RPM)</li>
                 <li>Auto-fallback to Template mode if limit reached</li>
@@ -232,14 +232,18 @@ export const AIPromptInput = ({ onModeChange }: AIPromptInputProps) => {
                 ? "Try: forest, rain, ocean, cafe, night, storm..."
                 : "Describe your soundscape (e.g., 'peaceful forest morning with birds')"
             }
-            className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="w-full px-4 py-3 bg-slate-800/80 text-white rounded-xl border border-slate-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 placeholder:text-slate-500 backdrop-blur-sm"
             disabled={isGenerating}
           />
         </div>
         <button
           type="submit"
           disabled={isGenerating || !keywords.trim()}
-          className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 disabled:from-gray-700 disabled:to-gray-700 disabled:cursor-not-allowed transition-all flex items-center gap-2 font-medium"
+          className={`px-6 py-3 rounded-xl text-white font-medium transition-all flex items-center gap-2 shadow-lg ${
+            useSimpleMode
+              ? "bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 shadow-emerald-500/25"
+              : "bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 shadow-indigo-500/25"
+          } disabled:from-slate-700 disabled:to-slate-700 disabled:cursor-not-allowed disabled:shadow-none`}
         >
           {isGenerating ? (
             <>
@@ -259,22 +263,22 @@ export const AIPromptInput = ({ onModeChange }: AIPromptInputProps) => {
       </form>
 
       {generationStatus && (
-        <div className="p-4 bg-purple-900/20 border border-purple-800 rounded-lg text-purple-300 text-sm">
+        <div className="p-4 bg-indigo-950/30 border border-indigo-800/50 rounded-xl text-indigo-300 text-sm backdrop-blur-sm">
           {generationStatus}
         </div>
       )}
 
       {error && (
-        <div className="p-4 bg-red-900/20 border border-red-800 rounded-lg text-red-400">
+        <div className="p-4 bg-rose-950/30 border border-rose-800/50 rounded-xl text-rose-400 backdrop-blur-sm">
           {error}
         </div>
       )}
 
-      <div className="text-xs text-gray-500 space-y-1">
+      <div className="text-xs text-slate-500 space-y-1">
         <p>
           💡 <strong>Pro tip:</strong> Be descriptive! Examples:
         </p>
-        <ul className="list-disc list-inside ml-4 space-y-1">
+        <ul className="list-disc list-inside ml-4 space-y-1 text-slate-600">
           <li>"Rainy forest night with distant thunder"</li>
           <li>"Peaceful ocean beach sunset with seagulls"</li>
           <li>"Cozy coffee shop ambience with light chatter"</li>

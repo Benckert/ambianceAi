@@ -70,14 +70,14 @@ export const PromptInput = () => {
           type="text"
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
-          placeholder="Describe your soundscape (e.g., 'rain forest ambient')"
-          className="flex-1 px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="Search for sounds (e.g., 'ocean waves', 'forest birds')"
+          className="flex-1 px-4 py-3 bg-slate-800/80 text-white rounded-xl border border-slate-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 placeholder:text-slate-500 backdrop-blur-sm"
           disabled={isLoading}
         />
         <button
           type="submit"
           disabled={isLoading || !prompt.trim()}
-          className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+          className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-xl hover:from-cyan-600 hover:to-blue-600 disabled:from-slate-700 disabled:to-slate-700 disabled:cursor-not-allowed transition-all flex items-center gap-2 font-medium shadow-lg shadow-cyan-500/25 disabled:shadow-none"
         >
           {isLoading ? (
             <>
@@ -97,14 +97,14 @@ export const PromptInput = () => {
       </form>
 
       {error && (
-        <div className="p-4 bg-red-900/20 border border-red-800 rounded-lg text-red-400">
+        <div className="p-4 bg-rose-950/30 border border-rose-800/50 rounded-xl text-rose-400 backdrop-blur-sm">
           {error}
         </div>
       )}
 
       {results.length > 0 && (
         <div className="space-y-2">
-          <h3 className="text-sm font-medium text-gray-400">
+          <h3 className="text-sm font-medium text-slate-400">
             Found {results.length} sound{results.length !== 1 ? "s" : ""}{" "}
             (loop-tagged shown first)
           </h3>
@@ -117,7 +117,7 @@ export const PromptInput = () => {
               return (
                 <div
                   key={clip.id}
-                  className="flex items-center justify-between gap-3 p-3 bg-gray-800 rounded-lg hover:bg-gray-750 transition-colors"
+                  className="flex items-center justify-between gap-3 p-3 bg-slate-800/60 backdrop-blur-sm rounded-xl border border-slate-700/50 hover:bg-slate-800/80 hover:border-slate-600/50 transition-all"
                 >
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
@@ -128,18 +128,18 @@ export const PromptInput = () => {
                         {clip.name}
                       </p>
                       {isLoopTagged && (
-                        <span className="px-2 py-0.5 text-xs bg-green-600 text-white rounded flex-shrink-0">
+                        <span className="px-2 py-0.5 text-xs bg-emerald-500/90 text-white rounded-md flex-shrink-0 font-medium">
                           Loop
                         </span>
                       )}
                     </div>
-                    <p className="text-xs text-gray-400">
+                    <p className="text-xs text-slate-400">
                       {clip.duration.toFixed(1)}s
                     </p>
                   </div>
                   <button
                     onClick={() => handleAddLayer(clip)}
-                    className="px-4 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors flex-shrink-0"
+                    className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white text-sm rounded-lg hover:from-cyan-600 hover:to-blue-600 transition-all flex-shrink-0 font-medium shadow-md shadow-cyan-500/20"
                   >
                     Add Layer
                   </button>
