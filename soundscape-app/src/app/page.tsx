@@ -10,21 +10,33 @@ import { Play, Pause, RotateCcw, Sparkles, Search } from "lucide-react"
 
 export default function Home() {
   const [useAI, setUseAI] = useState(false)
-  const isPlaying = useSoundscapeStore((state) => state.isPlaying);
-  const togglePlayback = useSoundscapeStore((state) => state.togglePlayback);
-  const reset = useSoundscapeStore((state) => state.reset);
-  const layers = useSoundscapeStore((state) => state.layers);
+  const [aiUseTemplate, setAiUseTemplate] = useState(true) // Track AI sub-mode
+  const isPlaying = useSoundscapeStore((state) => state.isPlaying)
+  const togglePlayback = useSoundscapeStore((state) => state.togglePlayback)
+  const reset = useSoundscapeStore((state) => state.reset)
+  const layers = useSoundscapeStore((state) => state.layers)
+
+  // Determine current mode for instructions
+  const currentMode = !useAI ? "manual" : aiUseTemplate ? "template" : "ai"
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900">
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-            ✨ Soundscape Creator
+          <h1 className="text-5xl mb-4 flex items-center justify-center gap-3">
+            <span className="text-4xl">{useAI ? "✨" : "🎵"}</span>
+            <span className="font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+              Soundscape Creator
+            </span>
           </h1>
           <p className="text-gray-400 text-lg">
-            Create ambient soundscapes with {useAI ? "AI" : "manual search"}
+            Create ambient soundscapes with{" "}
+            {currentMode === "manual"
+              ? "manual search"
+              : currentMode === "template"
+              ? "smart templates"
+              : "AI generation"}
           </p>
         </div>
 
@@ -58,7 +70,11 @@ export default function Home() {
 
         {/* Input Component */}
         <div className="mb-8">
-          {useAI ? <AIPromptInput /> : <PromptInput />}
+          {useAI ? (
+            <AIPromptInput onModeChange={setAiUseTemplate} />
+          ) : (
+            <PromptInput />
+          )}
         </div>
 
         {/* Control Panel */}
@@ -104,41 +120,125 @@ export default function Home() {
         {/* Instructions */}
         <div className="bg-blue-900/20 border border-blue-800 rounded-lg p-6">
           <h3 className="text-lg font-semibold text-blue-400 mb-3">
-            How to use:
+            How to use{" "}
+            {currentMode === "manual"
+              ? "Manual Search"
+              : currentMode === "template"
+              ? "Template Mode"
+              : "AI Mode"}
+            :
           </h3>
-          {useAI ? (
-            <ol className="list-decimal list-inside space-y-2 text-gray-300">
-              <li>Describe your desired soundscape in natural language</li>
-              <li>AI will analyze and select appropriate sounds</li>
-              <li>Adjust volumes and layers as needed</li>
-              <li>Press Play to start your ambient experience</li>
-            </ol>
-          ) : (
-            <ol className="list-decimal list-inside space-y-2 text-gray-300">
-              <li>
-                Search for loopable sounds (e.g., "rain", "ocean waves", "forest
-                ambiance")
-              </li>
-              <li>Add multiple layers to create your perfect soundscape</li>
-              <li>Adjust the volume of each layer to balance the mix</li>
-              <li>Press Play to start your ambient experience</li>
-            </ol>
+
+          {currentMode === "manual" && (
+            <>
+              <ol className="list-decimal list-inside space-y-2 text-gray-300">
+                <li>
+                  Search for sounds using keywords (e.g., "rain", "birds",
+                  "wind")
+                </li>
+                <li>Click "Add Layer" on sounds you like</li>
+                <li>Adjust volume sliders to balance your mix</li>
+                <li>Press Play to start your soundscape</li>
+              </ol>
+              <div className="mt-3 p-3 bg-gray-800/50 rounded border border-gray-700">
+                <p className="text-xs font-semibold text-blue-300 mb-1">
+                  💡 Search Tips:
+                </p>
+                <ul className="text-xs text-gray-400 space-y-1">
+                  <li>• Try: "ocean waves", "forest birds", "rain thunder"</li>
+                  <li>• Sounds tagged with "loop" are shown first</li>
+                  <li>• Mix different sound durations for best results</li>
+                </ul>
+              </div>
+            </>
           )}
+
+          {currentMode === "template" && (
+            <>
+              <ol className="list-decimal list-inside space-y-2 text-gray-300">
+                <li>Type a scene keyword (see examples below)</li>
+                <li>Click Generate to create instant soundscape</li>
+                <li>Adjust volumes and add/remove layers as needed</li>
+                <li>Press Play to start your ambient experience</li>
+              </ol>
+              <div className="mt-3 p-3 bg-green-900/20 rounded border border-green-800/50">
+                <p className="text-xs font-semibold text-green-300 mb-1">
+                  🎨 Available Templates:
+                </p>
+                <div className="grid grid-cols-2 gap-2 text-xs text-gray-400 mt-2">
+                  <div>
+                    <span className="text-green-400">🌲</span> forest
+                  </div>
+                  <div>
+                    <span className="text-blue-400">🌧️</span> rain
+                  </div>
+                  <div>
+                    <span className="text-cyan-400">🌊</span> ocean
+                  </div>
+                  <div>
+                    <span className="text-amber-400">☕</span> cafe
+                  </div>
+                  <div>
+                    <span className="text-gray-400">🏙️</span> city
+                  </div>
+                  <div>
+                    <span className="text-purple-400">🌙</span> night
+                  </div>
+                  <div>
+                    <span className="text-indigo-400">🚀</span> space
+                  </div>
+                  <div>
+                    <span className="text-pink-400">🧘</span> meditation
+                  </div>
+                  <div>
+                    <span className="text-orange-400">🔥</span> fire
+                  </div>
+                  <div>
+                    <span className="text-slate-400">⛈️</span> storm
+                  </div>
+                </div>
+                <p className="text-xs text-gray-500 mt-2">
+                  Mix keywords like "rainy forest" or "peaceful ocean"
+                </p>
+              </div>
+            </>
+          )}
+
+          {currentMode === "ai" && (
+            <>
+              <ol className="list-decimal list-inside space-y-2 text-gray-300">
+                <li>Describe your scene in natural language</li>
+                <li>AI interprets and creates custom soundscape</li>
+                <li>Fine-tune volumes and layers as needed</li>
+                <li>Press Play to enjoy your creation</li>
+              </ol>
+              <div className="mt-3 p-3 bg-purple-900/20 rounded border border-purple-800/50">
+                <p className="text-xs font-semibold text-purple-300 mb-1">
+                  🤖 AI Examples:
+                </p>
+                <ul className="text-xs text-gray-400 space-y-1">
+                  <li>• "Peaceful forest morning with distant birds"</li>
+                  <li>• "Cozy coffee shop on a rainy day"</li>
+                  <li>• "Calm beach at sunset with gentle waves"</li>
+                  <li>• "Mysterious sci-fi spaceship interior"</li>
+                </ul>
+              </div>
+              <div className="mt-2 p-2 bg-yellow-900/20 rounded border border-yellow-800/50">
+                <p className="text-xs text-yellow-300">
+                  ⚡ <strong>Smart Caching:</strong> Repeated searches are
+                  instant!
+                </p>
+              </div>
+            </>
+          )}
+
           <div className="mt-4 pt-4 border-t border-blue-800/50">
             <p className="text-sm text-gray-400">
-              💡 <strong>Master Loop System:</strong> Your soundscape plays in a
-              30-second cycle with natural variation. Sounds are distributed
-              evenly with random timing (±1.5s) to create an organic,
-              non-repetitive atmosphere. Mix different sound durations for best
-              results!
+              💡 <strong>Master Loop System:</strong> Sounds play in 30-second
+              cycles with natural variation (±1.5s random timing). Short clips
+              and non-looped sounds get automatic fade-in/fade-out for smooth
+              playback.
             </p>
-            {useAI && (
-              <p className="text-sm text-yellow-400 mt-2">
-                ⚠️ <strong>Note:</strong> AI mode requires a valid OpenAI API
-                key with available credits. If you don't have one, use Manual
-                Search mode instead.
-              </p>
-            )}
           </div>
         </div>
 

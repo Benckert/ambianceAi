@@ -1,42 +1,55 @@
 "use client";
 
-import { useState } from "react";
-import { Sparkles, Loader2 } from "lucide-react";
-import { useSoundscapeStore } from "@/hooks/useSoundscapeStore";
-import { AILayerSpec, FreeSoundClip } from "@/types/soundscape";
+import { useState, useEffect } from "react"
+import { Sparkles, Loader2 } from "lucide-react"
+import { useSoundscapeStore } from "@/hooks/useSoundscapeStore"
+import { AILayerSpec, FreeSoundClip } from "@/types/soundscape"
 
-export const AIPromptInput = () => {
-  const [keywords, setKeywords] = useState("");
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [generationStatus, setGenerationStatus] = useState<string>("");
-  const [useSimpleMode, setUseSimpleMode] = useState(true); // Default to free mode
-  const addLayer = useSoundscapeStore((state) => state.addLayer);
-  const reset = useSoundscapeStore((state) => state.reset);
+interface AIPromptInputProps {
+  onModeChange?: (isTemplate: boolean) => void
+}
 
-  const fetchSoundForLayer = async (layerSpec: AILayerSpec): Promise<FreeSoundClip | null> => {
+export const AIPromptInput = ({ onModeChange }: AIPromptInputProps) => {
+  const [keywords, setKeywords] = useState("")
+  const [isGenerating, setIsGenerating] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [generationStatus, setGenerationStatus] = useState<string>("")
+  const [useSimpleMode, setUseSimpleMode] = useState(true) // Default to free mode
+  const addLayer = useSoundscapeStore((state) => state.addLayer)
+  const reset = useSoundscapeStore((state) => state.reset)
+
+  // Notify parent component when mode changes
+  useEffect(() => {
+    if (onModeChange) {
+      onModeChange(useSimpleMode)
+    }
+  }, [useSimpleMode, onModeChange])
+
+  const fetchSoundForLayer = async (
+    layerSpec: AILayerSpec
+  ): Promise<FreeSoundClip | null> => {
     try {
       const response = await fetch(
         `/api/freesound?query=${encodeURIComponent(layerSpec.searchQuery)}`
-      );
-      
+      )
+
       if (!response.ok) {
-        throw new Error('Failed to fetch sound');
+        throw new Error("Failed to fetch sound")
       }
 
-      const data = await response.json();
-      
+      const data = await response.json()
+
       if (data.results && data.results.length > 0) {
         // Return the first result (prioritized by our API)
-        return data.results[0];
+        return data.results[0]
       }
-      
-      return null;
+
+      return null
     } catch (err) {
-      console.error(`Failed to fetch sound for: ${layerSpec.searchQuery}`, err);
-      return null;
+      console.error(`Failed to fetch sound for: ${layerSpec.searchQuery}`, err)
+      return null
     }
-  };
+  }
 
   const handleGenerate = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -270,4 +283,4 @@ export const AIPromptInput = () => {
       </div>
     </div>
   )
-};
+}
