@@ -1,15 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState } from "react"
 import { SoundscapePlayer } from "@/components/SoundscapePlayer";
 import { LayersList } from "@/components/LayerControl";
-import { AIPromptInput } from "@/components/AIPromptInput";
-import { PromptInput } from "@/components/PromptInput";
+import { AIPromptInput } from "@/components/AIPromptInput"
+import { PromptInput } from "@/components/PromptInput"
 import { useSoundscapeStore } from "@/hooks/useSoundscapeStore";
-import { Play, Pause, RotateCcw, Sparkles, Search } from "lucide-react";
+import { Play, Pause, RotateCcw, Sparkles, Search } from "lucide-react"
 
 export default function Home() {
-  const [useAI, setUseAI] = useState(false);
+  const [useAI, setUseAI] = useState(false)
   const isPlaying = useSoundscapeStore((state) => state.isPlaying);
   const togglePlayback = useSoundscapeStore((state) => state.togglePlayback);
   const reset = useSoundscapeStore((state) => state.reset);
@@ -115,7 +115,10 @@ export default function Home() {
             </ol>
           ) : (
             <ol className="list-decimal list-inside space-y-2 text-gray-300">
-              <li>Search for loopable sounds (e.g., "rain", "ocean waves", "forest ambiance")</li>
+              <li>
+                Search for loopable sounds (e.g., "rain", "ocean waves", "forest
+                ambiance")
+              </li>
               <li>Add multiple layers to create your perfect soundscape</li>
               <li>Adjust the volume of each layer to balance the mix</li>
               <li>Press Play to start your ambient experience</li>
@@ -131,8 +134,9 @@ export default function Home() {
             </p>
             {useAI && (
               <p className="text-sm text-yellow-400 mt-2">
-                ⚠️ <strong>Note:</strong> AI mode requires a valid OpenAI API key with available credits. 
-                If you don't have one, use Manual Search mode instead.
+                ⚠️ <strong>Note:</strong> AI mode requires a valid OpenAI API
+                key with available credits. If you don't have one, use Manual
+                Search mode instead.
               </p>
             )}
           </div>

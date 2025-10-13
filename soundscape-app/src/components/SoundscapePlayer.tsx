@@ -47,15 +47,15 @@ export const SoundscapePlayer = () => {
       const timeout = setTimeout(() => {
         if (howl && isPlaying) {
           const targetVolume = layer.isMuted ? 0 : layer.volume
-          
+
           if (needsFade && targetVolume > 0) {
             // Apply fade-in for short/non-looped clips
             howl.volume(0)
             const soundId = howl.play()
             howl.fade(0, targetVolume, FADE_DURATION, soundId)
-            
+
             // Schedule fade-out before the clip ends
-            const fadeOutStart = (soundDuration * 1000) - FADE_DURATION
+            const fadeOutStart = soundDuration * 1000 - FADE_DURATION
             if (fadeOutStart > FADE_DURATION) {
               setTimeout(() => {
                 howl.fade(targetVolume, 0, FADE_DURATION, soundId)
@@ -150,7 +150,7 @@ export const SoundscapePlayer = () => {
     const previousLayerIds = layerIdsRef.current
 
     // Check if layer composition has changed (added/removed)
-    const layersChanged = 
+    const layersChanged =
       currentLayerIds.length !== previousLayerIds.length ||
       !currentLayerIds.every((id, idx) => id === previousLayerIds[idx])
 
@@ -200,7 +200,7 @@ export const SoundscapePlayer = () => {
     // Only restart master loop if layers were added/removed or play state changed
     if (layersChanged) {
       layerIdsRef.current = currentLayerIds
-      
+
       if (isPlaying && layers.length > 0) {
         startMasterLoop()
       } else if (!isPlaying || layers.length === 0) {
@@ -218,7 +218,7 @@ export const SoundscapePlayer = () => {
         })
       }
     }
-  }, [layers.map(l => l.id).join(','), isPlaying]) // Only re-run when layer IDs or play state change
+  }, [layers.map((l) => l.id).join(","), isPlaying]) // Only re-run when layer IDs or play state change
 
   // Separate effect for volume/mute changes (no master loop restart)
   useEffect(() => {
