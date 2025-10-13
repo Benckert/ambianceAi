@@ -97,51 +97,54 @@ export const PromptInput = () => {
     <div className="space-y-4">
       <form
         onSubmit={handleSearch}
-        className="flex gap-2"
+        className="flex flex-col sm:flex-row gap-2"
       >
         <input
           type="text"
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
-          placeholder="Search for sounds (e.g., 'ocean waves', 'forest birds')"
-          className="flex-1 px-4 py-3 bg-slate-800/80 text-white rounded-xl border border-slate-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 placeholder:text-slate-500 backdrop-blur-sm"
+          placeholder="Search for sounds (e.g., 'ocean waves')"
+          className="flex-1 px-4 py-3 bg-slate-800/80 text-white rounded-xl border border-slate-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 placeholder:text-slate-500 backdrop-blur-sm text-sm sm:text-base"
           disabled={isLoading}
         />
         <button
           type="submit"
           disabled={isLoading || !prompt.trim()}
-          className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-xl hover:from-cyan-600 hover:to-blue-600 disabled:from-slate-700 disabled:to-slate-700 disabled:cursor-not-allowed cursor-pointer transition-all flex items-center gap-2 font-medium shadow-lg shadow-cyan-500/25 disabled:shadow-none"
+          className="px-4 sm:px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-xl hover:from-cyan-600 hover:to-blue-600 disabled:from-slate-700 disabled:to-slate-700 disabled:cursor-not-allowed cursor-pointer transition-all flex items-center justify-center gap-2 font-medium shadow-lg shadow-cyan-500/25 disabled:shadow-none text-sm sm:text-base whitespace-nowrap"
         >
           {isLoading ? (
             <>
               <Loader2
-                size={20}
-                className="animate-spin"
+                size={18}
+                className="animate-spin sm:w-5 sm:h-5"
               />
-              Searching...
+              <span className="hidden sm:inline">Searching...</span>
             </>
           ) : (
             <>
-              <Search size={20} />
-              Search
+              <Search
+                size={18}
+                className="sm:w-5 sm:h-5"
+              />
+              <span className="hidden sm:inline">Search</span>
             </>
           )}
         </button>
       </form>
 
       {error && (
-        <div className="p-4 bg-rose-950/30 border border-rose-800/50 rounded-xl text-rose-400 backdrop-blur-sm">
+        <div className="p-3 sm:p-4 bg-rose-950/30 border border-rose-800/50 rounded-xl text-rose-400 backdrop-blur-sm text-sm">
           {error}
         </div>
       )}
 
       {results.length > 0 && (
         <div className="space-y-2">
-          <h3 className="text-sm font-medium text-slate-400">
+          <h3 className="text-xs sm:text-sm font-medium text-slate-400">
             Found {results.length} sound{results.length !== 1 ? "s" : ""}{" "}
             (loop-tagged shown first)
           </h3>
-          <div className="max-h-64 overflow-y-auto space-y-2">
+          <div className="max-h-64 sm:max-h-80 overflow-y-auto space-y-2">
             {results.map((clip) => {
               const isLoopTagged = clip.tags.some((tag: string) =>
                 tag.toLowerCase().includes("loop")
@@ -157,16 +160,16 @@ export const PromptInput = () => {
               return (
                 <div
                   key={clip.id}
-                  className={`flex items-center justify-between gap-3 p-3 rounded-xl border transition-all group/item ${
+                  className={`flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 p-3 rounded-xl border transition-all group/item ${
                     isAlreadyAdded
                       ? "bg-slate-700/40 border-slate-600/30 hover:opacity-100"
                       : "bg-slate-800/60 backdrop-blur-sm border-slate-700/50 hover:bg-slate-800/80 hover:border-slate-600/50"
                   }`}
                 >
-                  <div className="flex-1 min-w-0">
+                  <div className="flex-1 min-w-0 w-full sm:w-auto">
                     <div className="flex items-center gap-2 mb-1">
                       <p
-                        className={`text-sm font-medium truncate flex-1 min-w-0 ${
+                        className={`text-xs sm:text-sm font-medium truncate flex-1 min-w-0 ${
                           isAlreadyAdded
                             ? "text-white/60 group-hover/item:text-white"
                             : "text-white"
@@ -197,7 +200,7 @@ export const PromptInput = () => {
                         ? handleRemoveLayer(clip)
                         : handleAddLayer(clip)
                     }
-                    className={`px-4 py-2 text-sm rounded-lg flex-shrink-0 font-medium min-w-[100px] group cursor-pointer ${
+                    className={`w-full sm:w-auto px-4 py-2 text-xs sm:text-sm rounded-lg flex-shrink-0 font-medium min-w-[100px] group cursor-pointer ${
                       isAlreadyAdded
                         ? "bg-slate-600 text-white/60 hover:bg-gradient-to-r hover:from-rose-500 hover:to-pink-500 hover:text-white hover:shadow-md hover:shadow-rose-500/20"
                         : "bg-gradient-to-r from-cyan-500 to-blue-500 text-white hover:from-cyan-600 hover:to-blue-600 shadow-md shadow-cyan-500/20 transition-all"

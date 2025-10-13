@@ -6,8 +6,10 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Soundscape Creator - Ambient Sound Mixer",
-  description: "Create beautiful ambient soundscapes using loopable sounds from FreeSound",
-};
+  description:
+    "Create beautiful ambient soundscapes using loopable sounds from FreeSound",
+  viewport: "width=device-width, initial-scale=1, maximum-scale=5",
+}
 
 export default function RootLayout({
   children,

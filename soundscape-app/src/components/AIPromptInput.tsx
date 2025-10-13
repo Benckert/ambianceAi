@@ -232,43 +232,45 @@ export const AIPromptInput = ({ onModeChange }: AIPromptInputProps) => {
   return (
     <div className="space-y-4">
       {/* Mode Toggle */}
-      <div className="flex items-center justify-between p-3 bg-slate-800/60 backdrop-blur-sm rounded-xl border border-slate-700/50">
-        <div className="flex items-center gap-3">
-          <span className="text-sm text-slate-400">Generation Mode:</span>
-          <button
-            type="button"
-            onClick={() => setUseSimpleMode(!useSimpleMode)}
-            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer ${
-              useSimpleMode ? "bg-emerald-500" : "bg-indigo-500"
-            }`}
-          >
-            <span
-              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                useSimpleMode ? "translate-x-1" : "translate-x-6"
+      <div className="flex flex-col gap-3 p-3 bg-slate-800/60 backdrop-blur-sm rounded-xl border border-slate-700/50">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <span className="text-xs sm:text-sm text-slate-400">Mode:</span>
+            <button
+              type="button"
+              onClick={() => setUseSimpleMode(!useSimpleMode)}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer flex-shrink-0 ${
+                useSimpleMode ? "bg-emerald-500" : "bg-indigo-500"
               }`}
-            />
-          </button>
-          <span className="text-sm font-medium text-white">
-            {useSimpleMode ? "🎨 Template (Free)" : "🤖 AI (Requires Credits)"}
-          </span>
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  useSimpleMode ? "translate-x-1" : "translate-x-6"
+                }`}
+              />
+            </button>
+            <span className="text-xs sm:text-sm font-medium text-white">
+              {useSimpleMode ? "🎨 Template" : "🤖 AI"}
+            </span>
+          </div>
         </div>
-        <span className="text-xs text-slate-500">
+        <p className="text-xs text-slate-500">
           {useSimpleMode
-            ? "Uses predefined templates"
+            ? "Uses predefined templates (free)"
             : "Uses OpenAI GPT-3.5 (cached & rate-limited)"}
-        </span>
+        </p>
       </div>
 
       {/* Rate Limit Info Banner */}
       {!useSimpleMode && (
         <div className="p-3 bg-amber-950/30 border border-amber-800/50 rounded-xl backdrop-blur-sm">
           <div className="flex items-start gap-2">
-            <span className="text-amber-400 text-sm">⚡</span>
+            <span className="text-amber-400 text-sm flex-shrink-0">⚡</span>
             <div className="flex-1">
-              <p className="text-xs text-amber-300 font-medium mb-1">
+              <p className="text-xs sm:text-sm text-amber-300 font-medium mb-1">
                 AI Mode Optimizations Active:
               </p>
-              <ul className="text-xs text-amber-400/80 space-y-0.5 list-disc list-inside">
+              <ul className="text-xs sm:text-sm text-amber-400/80 space-y-0.5 list-disc list-inside">
                 <li>Responses cached for 24h (instant re-use)</li>
                 <li>Rate limited to 2 requests/min (stays under 3 RPM)</li>
                 <li>Auto-fallback to Template mode if limit reached</li>
@@ -280,7 +282,7 @@ export const AIPromptInput = ({ onModeChange }: AIPromptInputProps) => {
 
       <form
         onSubmit={handleGenerate}
-        className="flex gap-2"
+        className="flex flex-col sm:flex-row gap-2"
       >
         <div className="flex-1">
           <input
@@ -289,17 +291,17 @@ export const AIPromptInput = ({ onModeChange }: AIPromptInputProps) => {
             onChange={(e) => setKeywords(e.target.value)}
             placeholder={
               useSimpleMode
-                ? "Try: forest, rain, ocean, cafe, night, storm..."
-                : "Describe your soundscape (e.g., 'peaceful forest morning with birds')"
+                ? "Try: forest, rain, ocean, cafe..."
+                : "Describe your soundscape..."
             }
-            className="w-full px-4 py-3 bg-slate-800/80 text-white rounded-xl border border-slate-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 placeholder:text-slate-500 backdrop-blur-sm"
+            className="w-full px-4 py-3 bg-slate-800/80 text-white rounded-xl border border-slate-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 placeholder:text-slate-500 backdrop-blur-sm text-sm sm:text-base"
             disabled={isGenerating}
           />
         </div>
         <button
           type="submit"
           disabled={isGenerating || !keywords.trim()}
-          className={`px-6 py-3 rounded-xl text-white font-medium transition-all flex items-center gap-2 shadow-lg cursor-pointer ${
+          className={`px-4 sm:px-6 py-3 rounded-xl text-white font-medium transition-all flex items-center justify-center gap-2 shadow-lg cursor-pointer text-sm sm:text-base whitespace-nowrap ${
             useSimpleMode
               ? "bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 shadow-emerald-500/25"
               : "bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 shadow-indigo-500/25"
@@ -308,15 +310,18 @@ export const AIPromptInput = ({ onModeChange }: AIPromptInputProps) => {
           {isGenerating ? (
             <>
               <Loader2
-                size={20}
-                className="animate-spin"
+                size={18}
+                className="animate-spin sm:w-5 sm:h-5"
               />
-              Generating...
+              <span className="hidden sm:inline">Generating...</span>
             </>
           ) : (
             <>
-              <Sparkles size={20} />
-              Generate
+              <Sparkles
+                size={18}
+                className="sm:w-5 sm:h-5"
+              />
+              <span className="hidden sm:inline">Generate</span>
             </>
           )}
         </button>
