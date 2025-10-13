@@ -10,6 +10,7 @@ export const AIPromptInput = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [generationStatus, setGenerationStatus] = useState<string>("");
+  const [useSimpleMode, setUseSimpleMode] = useState(true); // Default to free mode
   const addLayer = useSoundscapeStore((state) => state.addLayer);
   const reset = useSoundscapeStore((state) => state.reset);
 
@@ -44,11 +45,14 @@ export const AIPromptInput = () => {
 
     setIsGenerating(true);
     setError(null);
-    setGenerationStatus("🤖 AI is analyzing your keywords...");
+    setGenerationStatus(useSimpleMode ? "🎨 Creating soundscape template..." : "🤖 AI is analyzing your keywords...");
 
     try {
+      // Choose endpoint based on mode
+      const endpoint = useSimpleMode ? '/api/generate-soundscape-simple' : '/api/generate-soundscape';
+      
       // Step 1: Get AI structure
-      const aiResponse = await fetch('/api/generate-soundscape', {
+      const aiResponse = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ keywords: keywords.trim() }),
@@ -117,13 +121,42 @@ export const AIPromptInput = () => {
 
   return (
     <div className="space-y-4">
+      {/* Mode Toggle */}
+      <div className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg border border-gray-700">
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-gray-400">Generation Mode:</span>
+          <button
+            type="button"
+            onClick={() => setUseSimpleMode(!useSimpleMode)}
+            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+              useSimpleMode ? 'bg-green-600' : 'bg-purple-600'
+            }`}
+          >
+            <span
+              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                useSimpleMode ? 'translate-x-1' : 'translate-x-6'
+              }`}
+            />
+          </button>
+          <span className="text-sm font-medium text-white">
+            {useSimpleMode ? '🎨 Template (Free)' : '🤖 AI (Requires Credits)'}
+          </span>
+        </div>
+        <span className="text-xs text-gray-500">
+          {useSimpleMode ? 'Uses predefined templates' : 'Uses OpenAI GPT-3.5'}
+        </span>
+      </div>
+
       <form onSubmit={handleGenerate} className="flex gap-2">
         <div className="flex-1">
           <input
             type="text"
             value={keywords}
             onChange={(e) => setKeywords(e.target.value)}
-            placeholder="Describe your soundscape (e.g., 'peaceful forest morning with birds')"
+            placeholder={useSimpleMode 
+              ? "Try: forest, rain, ocean, cafe, night, storm..."
+              : "Describe your soundscape (e.g., 'peaceful forest morning with birds')"
+            }
             className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
             disabled={isGenerating}
           />

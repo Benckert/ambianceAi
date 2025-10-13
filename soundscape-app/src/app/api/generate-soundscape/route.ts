@@ -7,28 +7,32 @@ const openai = new OpenAI({
 
 export async function POST(req: NextRequest) {
   try {
-    const { keywords } = await req.json();
+    const { keywords } = await req.json()
 
     if (!keywords || keywords.trim().length === 0) {
       return NextResponse.json(
-        { error: 'Keywords are required' },
+        { error: "Keywords are required" },
         { status: 400 }
-      );
+      )
     }
 
     if (!process.env.OPENAI_API_KEY) {
       return NextResponse.json(
-        { error: 'OpenAI API key not configured' },
+        { error: "OpenAI API key not configured" },
         { status: 500 }
-      );
+      )
     }
 
     // Use OpenAI to interpret keywords and create soundscape structure
+    // Model options (from cheapest to most capable):
+    // - 'gpt-3.5-turbo' - Cheapest, often works on free tier
+    // - 'gpt-4o-mini' - Balanced performance/cost (current)
+    // - 'gpt-4o' - Most capable but expensive
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
+      model: "gpt-3.5-turbo", // Changed to cheaper model to avoid quota issues
       messages: [
         {
-          role: 'system',
+          role: "system",
           content: `You are an expert audio engineer specializing in ambient soundscapes. Your task is to analyze user keywords and create a structured soundscape with multiple audio layers.
 
 For each user input, identify 3-5 distinct sound layers that would create a cohesive ambient soundscape. Categorize sounds into:
@@ -59,30 +63,29 @@ Return ONLY valid JSON with this structure:
     }
   ],
   "mixingNotes": "Brief notes on the overall soundscape and how layers work together"
-}`
+}`,
         },
         {
-          role: 'user',
-          content: keywords
-        }
+          role: "user",
+          content: keywords,
+        },
       ],
       temperature: 0.7,
-      response_format: { type: "json_object" }
-    });
+      response_format: { type: "json_object" },
+    })
 
-    const aiResponse = completion.choices[0].message.content;
+    const aiResponse = completion.choices[0].message.content
     if (!aiResponse) {
-      throw new Error('No response from OpenAI');
+      throw new Error("No response from OpenAI")
     }
 
-    const soundscapeStructure = JSON.parse(aiResponse);
+    const soundscapeStructure = JSON.parse(aiResponse)
 
     return NextResponse.json({
       success: true,
       soundscape: soundscapeStructure,
       keywords: keywords,
-    });
-
+    })
   } catch (error: any) {
     console.error('AI Soundscape Generation Error:', error);
     
