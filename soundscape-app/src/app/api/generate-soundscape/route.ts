@@ -5,6 +5,37 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+// ===== OPTIMIZATION 1: IN-MEMORY CACHE =====
+// Cache responses for identical keywords to avoid duplicate API calls
+const responseCache = new Map<string, any>();
+const CACHE_DURATION = 1000 * 60 * 60 * 24; // 24 hours
+
+interface CacheEntry {
+  data: any;
+  timestamp: number;
+}
+
+// ===== OPTIMIZATION 2: RATE LIMITING =====
+// Track requests to avoid hitting 3 RPM limit
+const requestTimestamps: number[] = [];
+const MAX_REQUESTS_PER_MINUTE = 2; // Stay under 3 RPM limit
+
+function canMakeRequest(): boolean {
+  const now = Date.now();
+  const oneMinuteAgo = now - 60000;
+  
+  // Remove timestamps older than 1 minute
+  const recentRequests = requestTimestamps.filter(ts => ts > oneMinuteAgo);
+  requestTimestamps.length = 0;
+  requestTimestamps.push(...recentRequests);
+  
+  return recentRequests.length < MAX_REQUESTS_PER_MINUTE;
+}
+
+function recordRequest(): void {
+  requestTimestamps.push(Date.now());
+}
+
 export async function POST(req: NextRequest) {
   try {
     const { keywords } = await req.json()
@@ -23,46 +54,53 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Use OpenAI to interpret keywords and create soundscape structure
-    // Model options (from cheapest to most capable):
-    // - 'gpt-3.5-turbo' - Cheapest, often works on free tier
-    // - 'gpt-4o-mini' - Balanced performance/cost (current)
-    // - 'gpt-4o' - Most capable but expensive
+    // Normalize keywords for cache lookup
+    const normalizedKeywords = keywords.trim().toLowerCase();
+
+    // ===== CHECK CACHE FIRST =====
+    const cachedEntry = responseCache.get(normalizedKeywords) as CacheEntry | undefined;
+    if (cachedEntry) {
+      const age = Date.now() - cachedEntry.timestamp;
+      if (age < CACHE_DURATION) {
+        console.log(`✅ Cache hit for: "${normalizedKeywords}"`);
+        return NextResponse.json({
+          success: true,
+          soundscape: cachedEntry.data,
+          keywords: keywords,
+          cached: true,
+        });
+      } else {
+        // Expired cache entry
+        responseCache.delete(normalizedKeywords);
+      }
+    }
+
+    // ===== CHECK RATE LIMIT =====
+    if (!canMakeRequest()) {
+      console.warn('⚠️ Rate limit reached, falling back to template mode');
+      return NextResponse.json(
+        { 
+          error: 'Rate limit reached',
+          details: 'Too many AI requests. Please wait a moment or use Template mode.',
+          fallbackToTemplate: true,
+        },
+        { status: 429 }
+      );
+    }
+
+    // ===== OPTIMIZATION 3: SHORTENED PROMPT (Reduce Token Usage) =====
     const completion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo", // Changed to cheaper model to avoid quota issues
+      model: "gpt-3.5-turbo",
       messages: [
         {
           role: "system",
-          content: `You are an expert audio engineer specializing in ambient soundscapes. Your task is to analyze user keywords and create a structured soundscape with multiple audio layers.
-
-For each user input, identify 3-5 distinct sound layers that would create a cohesive ambient soundscape. Categorize sounds into:
-- BACKGROUND: Continuous ambient sounds (40-50% volume) - e.g., rain, ocean, wind
-- MIDGROUND: Textural elements (30-40% volume) - e.g., rustling leaves, flowing water
-- FOREGROUND: Accent sounds (20-30% volume) - e.g., birds, thunder, bells
-
-For each layer, provide:
-1. A specific FreeSound search query (optimized for finding loopable sounds)
-2. A category (background/midground/foreground)
-3. A recommended volume (0.0 to 1.0)
-4. A brief description of the sound's role
-
-Consider:
-- Sound frequency balance (don't overlap too many similar frequencies)
-- Natural environment compatibility (sounds that would occur together)
-- Variation in duration preferences (mix of short and longer loops)
-- Complementary sounds that create depth
-
-Return ONLY valid JSON with this structure:
+          content: `Create 3-5 sound layers for ambient soundscape. Categorize: background (0.4-0.5 vol), midground (0.3-0.4 vol), foreground (0.2-0.3 vol).
+Return JSON:
 {
   "layers": [
-    {
-      "searchQuery": "rain ambience loop",
-      "category": "background",
-      "volume": 0.45,
-      "description": "Steady rain for ambient base"
-    }
+    {"searchQuery": "sound query", "category": "background", "volume": 0.45, "description": "brief"}
   ],
-  "mixingNotes": "Brief notes on the overall soundscape and how layers work together"
+  "mixingNotes": "brief notes"
 }`,
         },
         {
@@ -71,8 +109,11 @@ Return ONLY valid JSON with this structure:
         },
       ],
       temperature: 0.7,
+      max_tokens: 500, // Limit response size
       response_format: { type: "json_object" },
     })
+
+    recordRequest(); // Track this request
 
     const aiResponse = completion.choices[0].message.content
     if (!aiResponse) {
@@ -81,20 +122,33 @@ Return ONLY valid JSON with this structure:
 
     const soundscapeStructure = JSON.parse(aiResponse)
 
+    // ===== CACHE THE RESPONSE =====
+    responseCache.set(normalizedKeywords, {
+      data: soundscapeStructure,
+      timestamp: Date.now(),
+    });
+
+    // ===== OPTIMIZATION 4: LOG TOKEN USAGE =====
+    console.log(`🎵 Generated soundscape for: "${keywords}"`);
+    console.log(`📊 Tokens used: ${completion.usage?.total_tokens || 'unknown'}`);
+    console.log(`📦 Cache size: ${responseCache.size} entries`);
+
     return NextResponse.json({
       success: true,
       soundscape: soundscapeStructure,
       keywords: keywords,
+      cached: false,
     })
   } catch (error: any) {
     console.error('AI Soundscape Generation Error:', error);
     
-    // Check for quota exceeded error
-    if (error?.status === 429 || error?.message?.includes('quota')) {
+    // Check for quota/rate limit errors
+    if (error?.status === 429 || error?.message?.includes('quota') || error?.message?.includes('rate')) {
       return NextResponse.json(
         { 
-          error: 'OpenAI API quota exceeded',
-          details: 'Your OpenAI API key has exceeded its quota. Please add billing at platform.openai.com or use a different API key.'
+          error: 'OpenAI API limit reached',
+          details: 'Rate limit or quota exceeded. Use Template mode instead.',
+          fallbackToTemplate: true,
         },
         { status: 429 }
       );
