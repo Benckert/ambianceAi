@@ -6,6 +6,7 @@ import { useSoundscapeStore } from "@/hooks/useSoundscapeStore";
 
 const FADE_DURATION = 500 // Fade in/out duration in milliseconds
 const MASTER_LOOP_DURATION = 30000 // 30 seconds master loop
+const SHORT_CLIP_THRESHOLD = 10 // Clips shorter than this get fade-in/out (seconds)
 
 interface ScheduledPlay {
   layerId: string
@@ -19,11 +20,14 @@ export const SoundscapePlayer = () => {
   const previousVolumesRef = useRef<Map<string, number>>(new Map())
   const scheduledPlaysRef = useRef<Map<string, ScheduledPlay>>(new Map())
   const masterLoopIntervalRef = useRef<NodeJS.Timeout | null>(null)
+  const layerIdsRef = useRef<string[]>([]) // Track layer IDs to detect changes
 
   // Function to schedule sound plays within the master loop
   const scheduleLayerInMasterLoop = (layer: any, howl: Howl) => {
     const soundDuration = layer.duration || 5 // Default to 5s if unknown
     const soundDurationMs = soundDuration * 1000
+    const isShortClip = soundDuration < SHORT_CLIP_THRESHOLD
+    const needsFade = isShortClip || !layer.loop // Short clips or non-looped clips get fade
 
     // Calculate how many times this sound should play in 30s
     // Add some variance (±20%) to prevent exact repetition
@@ -42,7 +46,25 @@ export const SoundscapePlayer = () => {
 
       const timeout = setTimeout(() => {
         if (howl && isPlaying) {
-          howl.play()
+          const targetVolume = layer.isMuted ? 0 : layer.volume
+          
+          if (needsFade && targetVolume > 0) {
+            // Apply fade-in for short/non-looped clips
+            howl.volume(0)
+            const soundId = howl.play()
+            howl.fade(0, targetVolume, FADE_DURATION, soundId)
+            
+            // Schedule fade-out before the clip ends
+            const fadeOutStart = (soundDuration * 1000) - FADE_DURATION
+            if (fadeOutStart > FADE_DURATION) {
+              setTimeout(() => {
+                howl.fade(targetVolume, 0, FADE_DURATION, soundId)
+              }, fadeOutStart)
+            }
+          } else {
+            // No fade for longer looped clips
+            howl.play()
+          }
         }
       }, delay)
 
@@ -121,13 +143,20 @@ export const SoundscapePlayer = () => {
     })
   }
 
+  // Effect for managing Howl instances and master loop (only when layers change)
   useEffect(() => {
     // Get current layer IDs
-    const currentLayerIds = new Set(layers.map((l) => l.id))
+    const currentLayerIds = layers.map((l) => l.id).sort()
+    const previousLayerIds = layerIdsRef.current
+
+    // Check if layer composition has changed (added/removed)
+    const layersChanged = 
+      currentLayerIds.length !== previousLayerIds.length ||
+      !currentLayerIds.every((id, idx) => id === previousLayerIds[idx])
 
     // Remove Howl instances for layers that no longer exist
     howlsRef.current.forEach((howl, id) => {
-      if (!currentLayerIds.has(id)) {
+      if (!currentLayerIds.includes(id)) {
         // Fade out before removing (layer already gone from UI)
         if (howl.playing()) {
           const currentVol = howl.volume()
@@ -147,7 +176,7 @@ export const SoundscapePlayer = () => {
       }
     })
 
-    // Create or update Howl instances for each layer
+    // Create new Howl instances for new layers
     layers.forEach((layer) => {
       let howl = howlsRef.current.get(layer.id)
 
@@ -164,10 +193,39 @@ export const SoundscapePlayer = () => {
           format: ["mp3"], // Specify format for better performance
         })
         howlsRef.current.set(layer.id, howl)
-
         previousVolumesRef.current.set(layer.id, layer.volume)
-      } else {
-        // Update volume instantly (no crossfade)
+      }
+    })
+
+    // Only restart master loop if layers were added/removed or play state changed
+    if (layersChanged) {
+      layerIdsRef.current = currentLayerIds
+      
+      if (isPlaying && layers.length > 0) {
+        startMasterLoop()
+      } else if (!isPlaying || layers.length === 0) {
+        stopMasterLoop()
+      }
+    }
+
+    // Cleanup function
+    return () => {
+      if (!isPlaying) {
+        howlsRef.current.forEach((howl) => {
+          if (howl.playing()) {
+            howl.pause()
+          }
+        })
+      }
+    }
+  }, [layers.map(l => l.id).join(','), isPlaying]) // Only re-run when layer IDs or play state change
+
+  // Separate effect for volume/mute changes (no master loop restart)
+  useEffect(() => {
+    layers.forEach((layer) => {
+      const howl = howlsRef.current.get(layer.id)
+      if (howl) {
+        // Update volume instantly (no crossfade, no restart)
         const previousVolume = previousVolumesRef.current.get(layer.id)
         const effectiveVolume = layer.isMuted ? 0 : layer.volume
 
@@ -183,25 +241,7 @@ export const SoundscapePlayer = () => {
         }
       }
     })
-
-    // Start or stop the master loop based on play state
-    if (isPlaying && layers.length > 0) {
-      startMasterLoop()
-    } else {
-      stopMasterLoop()
-    }
-
-    // Cleanup function
-    return () => {
-      if (!isPlaying) {
-        howlsRef.current.forEach((howl) => {
-          if (howl.playing()) {
-            howl.pause()
-          }
-        })
-      }
-    }
-  }, [layers, isPlaying])
+  }, [layers]) // Run on any layer change, but won't restart master loop
 
   // Cleanup all Howl instances on unmount
   useEffect(() => {

@@ -1,12 +1,15 @@
 "use client";
 
+import { useState } from "react";
 import { SoundscapePlayer } from "@/components/SoundscapePlayer";
 import { LayersList } from "@/components/LayerControl";
-import { AIPromptInput } from "@/components/AIPromptInput"
+import { AIPromptInput } from "@/components/AIPromptInput";
+import { PromptInput } from "@/components/PromptInput";
 import { useSoundscapeStore } from "@/hooks/useSoundscapeStore";
-import { Play, Pause, RotateCcw } from "lucide-react";
+import { Play, Pause, RotateCcw, Sparkles, Search } from "lucide-react";
 
 export default function Home() {
+  const [useAI, setUseAI] = useState(false);
   const isPlaying = useSoundscapeStore((state) => state.isPlaying);
   const togglePlayback = useSoundscapeStore((state) => state.togglePlayback);
   const reset = useSoundscapeStore((state) => state.reset);
@@ -18,16 +21,44 @@ export default function Home() {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-            ✨ AI Soundscape Generator
+            ✨ Soundscape Creator
           </h1>
           <p className="text-gray-400 text-lg">
-            Describe your perfect ambience and let AI create it
+            Create ambient soundscapes with {useAI ? "AI" : "manual search"}
           </p>
         </div>
 
-        {/* AI Input */}
+        {/* Mode Toggle */}
+        <div className="flex justify-center mb-6">
+          <div className="inline-flex bg-gray-800 rounded-lg p-1">
+            <button
+              onClick={() => setUseAI(false)}
+              className={`px-6 py-2 rounded-md transition-all flex items-center gap-2 ${
+                !useAI
+                  ? "bg-blue-600 text-white"
+                  : "text-gray-400 hover:text-white"
+              }`}
+            >
+              <Search size={18} />
+              Manual Search
+            </button>
+            <button
+              onClick={() => setUseAI(true)}
+              className={`px-6 py-2 rounded-md transition-all flex items-center gap-2 ${
+                useAI
+                  ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white"
+                  : "text-gray-400 hover:text-white"
+              }`}
+            >
+              <Sparkles size={18} />
+              AI Generator
+            </button>
+          </div>
+        </div>
+
+        {/* Input Component */}
         <div className="mb-8">
-          <AIPromptInput />
+          {useAI ? <AIPromptInput /> : <PromptInput />}
         </div>
 
         {/* Control Panel */}
@@ -75,15 +106,21 @@ export default function Home() {
           <h3 className="text-lg font-semibold text-blue-400 mb-3">
             How to use:
           </h3>
-          <ol className="list-decimal list-inside space-y-2 text-gray-300">
-            <li>
-              Search for loopable sounds (e.g., "rain", "ocean waves", "forest
-              ambiance")
-            </li>
-            <li>Add multiple layers to create your perfect soundscape</li>
-            <li>Adjust the volume of each layer to balance the mix</li>
-            <li>Press Play to start your ambient experience</li>
-          </ol>
+          {useAI ? (
+            <ol className="list-decimal list-inside space-y-2 text-gray-300">
+              <li>Describe your desired soundscape in natural language</li>
+              <li>AI will analyze and select appropriate sounds</li>
+              <li>Adjust volumes and layers as needed</li>
+              <li>Press Play to start your ambient experience</li>
+            </ol>
+          ) : (
+            <ol className="list-decimal list-inside space-y-2 text-gray-300">
+              <li>Search for loopable sounds (e.g., "rain", "ocean waves", "forest ambiance")</li>
+              <li>Add multiple layers to create your perfect soundscape</li>
+              <li>Adjust the volume of each layer to balance the mix</li>
+              <li>Press Play to start your ambient experience</li>
+            </ol>
+          )}
           <div className="mt-4 pt-4 border-t border-blue-800/50">
             <p className="text-sm text-gray-400">
               💡 <strong>Master Loop System:</strong> Your soundscape plays in a
@@ -92,6 +129,12 @@ export default function Home() {
               non-repetitive atmosphere. Mix different sound durations for best
               results!
             </p>
+            {useAI && (
+              <p className="text-sm text-yellow-400 mt-2">
+                ⚠️ <strong>Note:</strong> AI mode requires a valid OpenAI API key with available credits. 
+                If you don't have one, use Manual Search mode instead.
+              </p>
+            )}
           </div>
         </div>
 

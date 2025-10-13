@@ -83,8 +83,20 @@ Return ONLY valid JSON with this structure:
       keywords: keywords,
     });
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('AI Soundscape Generation Error:', error);
+    
+    // Check for quota exceeded error
+    if (error?.status === 429 || error?.message?.includes('quota')) {
+      return NextResponse.json(
+        { 
+          error: 'OpenAI API quota exceeded',
+          details: 'Your OpenAI API key has exceeded its quota. Please add billing at platform.openai.com or use a different API key.'
+        },
+        { status: 429 }
+      );
+    }
+    
     return NextResponse.json(
       { 
         error: 'Failed to generate soundscape',

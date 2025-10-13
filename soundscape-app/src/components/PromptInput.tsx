@@ -45,11 +45,16 @@ export const PromptInput = () => {
   }
 
   const handleAddLayer = (clip: FreeSoundClip) => {
+    // Detect if sound has loop tag
+    const hasLoopTag = clip.tags.some((tag) =>
+      tag.toLowerCase().includes("loop")
+    )
+
     addLayer({
       id: `layer-${clip.id}-${Date.now()}`,
       url: clip.previews["preview-hq-mp3"],
       volume: 0.5,
-      loop: true,
+      loop: hasLoopTag, // Use actual loop detection
       name: clip.name,
       duration: clip.duration, // Pass duration for master loop scheduling
     })

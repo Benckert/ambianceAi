@@ -55,7 +55,9 @@ export const AIPromptInput = () => {
       });
 
       if (!aiResponse.ok) {
-        throw new Error('Failed to generate soundscape structure');
+        const errorData = await aiResponse.json().catch(() => ({}));
+        console.error('API Error:', errorData);
+        throw new Error(errorData.error || errorData.details || 'Failed to generate soundscape structure');
       }
 
       const { soundscape } = await aiResponse.json();
@@ -105,8 +107,9 @@ export const AIPromptInput = () => {
       }
 
     } catch (err) {
-      setError('Failed to generate soundscape. Please try again.');
-      console.error(err);
+      const errorMessage = err instanceof Error ? err.message : 'Failed to generate soundscape. Please try again.';
+      setError(errorMessage);
+      console.error('Generation error:', err);
     } finally {
       setIsGenerating(false);
     }
