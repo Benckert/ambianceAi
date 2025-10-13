@@ -11,6 +11,8 @@ export const PromptInput = () => {
   const [results, setResults] = useState<FreeSoundClip[]>([]);
   const [error, setError] = useState<string | null>(null);
   const addLayer = useSoundscapeStore((state) => state.addLayer);
+  const removeLayer = useSoundscapeStore((state) => state.removeLayer)
+  const layers = useSoundscapeStore((state) => state.layers)
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -45,6 +47,21 @@ export const PromptInput = () => {
   }
 
   const handleAddLayer = (clip: FreeSoundClip) => {
+    // Check if this sound is already in use
+    const isDuplicate = layers.some(
+      (layer) =>
+        layer.id.includes(`layer-${clip.id}-`) ||
+        layer.id.includes(`ai-layer-${clip.id}-`)
+    )
+
+    if (isDuplicate) {
+      setError(
+        `"${clip.name}" is already in your soundscape. Try a different sound to avoid duplicates.`
+      )
+      setTimeout(() => setError(null), 3000)
+      return
+    }
+
     // Detect if sound has loop tag
     const hasLoopTag = clip.tags.some((tag) =>
       tag.toLowerCase().includes("loop")
@@ -58,6 +75,22 @@ export const PromptInput = () => {
       name: clip.name,
       duration: clip.duration, // Pass duration for master loop scheduling
     })
+
+    console.log(`✅ Added sound: ${clip.name} (ID: ${clip.id})`)
+  }
+
+  const handleRemoveLayer = (clip: FreeSoundClip) => {
+    // Find the layer with this sound ID
+    const layerToRemove = layers.find(
+      (layer) =>
+        layer.id.includes(`layer-${clip.id}-`) ||
+        layer.id.includes(`ai-layer-${clip.id}-`)
+    )
+
+    if (layerToRemove) {
+      removeLayer(layerToRemove.id)
+      console.log(`🗑️ Removed sound: ${clip.name} (ID: ${clip.id})`)
+    }
   }
 
   return (
@@ -114,15 +147,30 @@ export const PromptInput = () => {
                 tag.toLowerCase().includes("loop")
               )
 
+              // Check if this sound is already in the soundscape
+              const isAlreadyAdded = layers.some(
+                (layer) =>
+                  layer.id.includes(`layer-${clip.id}-`) ||
+                  layer.id.includes(`ai-layer-${clip.id}-`)
+              )
+
               return (
                 <div
                   key={clip.id}
-                  className="flex items-center justify-between gap-3 p-3 bg-slate-800/60 backdrop-blur-sm rounded-xl border border-slate-700/50 hover:bg-slate-800/80 hover:border-slate-600/50 transition-all"
+                  className={`flex items-center justify-between gap-3 p-3 rounded-xl border transition-all group/item ${
+                    isAlreadyAdded
+                      ? "bg-slate-700/40 border-slate-600/30 hover:opacity-100"
+                      : "bg-slate-800/60 backdrop-blur-sm border-slate-700/50 hover:bg-slate-800/80 hover:border-slate-600/50"
+                  }`}
                 >
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       <p
-                        className="text-sm font-medium text-white truncate flex-1 min-w-0"
+                        className={`text-sm font-medium truncate flex-1 min-w-0 ${
+                          isAlreadyAdded
+                            ? "text-white/60 group-hover/item:text-white"
+                            : "text-white"
+                        }`}
                         title={clip.name}
                       >
                         {clip.name}
@@ -133,15 +181,36 @@ export const PromptInput = () => {
                         </span>
                       )}
                     </div>
-                    <p className="text-xs text-slate-400">
+                    <p
+                      className={`text-xs ${
+                        isAlreadyAdded
+                          ? "text-slate-400/60 group-hover/item:text-slate-400"
+                          : "text-slate-400"
+                      }`}
+                    >
                       {clip.duration.toFixed(1)}s
                     </p>
                   </div>
                   <button
-                    onClick={() => handleAddLayer(clip)}
-                    className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white text-sm rounded-lg hover:from-cyan-600 hover:to-blue-600 transition-all flex-shrink-0 font-medium shadow-md shadow-cyan-500/20"
+                    onClick={() =>
+                      isAlreadyAdded
+                        ? handleRemoveLayer(clip)
+                        : handleAddLayer(clip)
+                    }
+                    className={`px-4 py-2 text-sm rounded-lg flex-shrink-0 font-medium min-w-[100px] group ${
+                      isAlreadyAdded
+                        ? "bg-slate-600 text-white/60 hover:bg-gradient-to-r hover:from-rose-500 hover:to-pink-500 hover:text-white hover:shadow-md hover:shadow-rose-500/20"
+                        : "bg-gradient-to-r from-cyan-500 to-blue-500 text-white hover:from-cyan-600 hover:to-blue-600 shadow-md shadow-cyan-500/20 transition-all"
+                    }`}
                   >
-                    Add Layer
+                    <span
+                      className={isAlreadyAdded ? "group-hover:hidden" : ""}
+                    >
+                      {isAlreadyAdded ? "Added" : "Add Layer"}
+                    </span>
+                    {isAlreadyAdded && (
+                      <span className="hidden group-hover:inline">Remove</span>
+                    )}
                   </button>
                 </div>
               )

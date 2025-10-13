@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Sparkles, Loader2 } from "lucide-react"
 import { useSoundscapeStore } from "@/hooks/useSoundscapeStore"
 import { AILayerSpec, FreeSoundClip } from "@/types/soundscape"
@@ -18,6 +18,9 @@ export const AIPromptInput = ({ onModeChange }: AIPromptInputProps) => {
   const addLayer = useSoundscapeStore((state) => state.addLayer)
   const reset = useSoundscapeStore((state) => state.reset)
 
+  // Track last prompt to detect duplicates
+  const lastPromptRef = useRef<string>("")
+
   // Notify parent component when mode changes
   useEffect(() => {
     if (onModeChange) {
@@ -26,7 +29,9 @@ export const AIPromptInput = ({ onModeChange }: AIPromptInputProps) => {
   }, [useSimpleMode, onModeChange])
 
   const fetchSoundForLayer = async (
-    layerSpec: AILayerSpec
+    layerSpec: AILayerSpec,
+    excludeSoundIds: Set<number> = new Set(),
+    resultIndex: number = 0
   ): Promise<FreeSoundClip | null> => {
     try {
       const response = await fetch(
@@ -40,8 +45,21 @@ export const AIPromptInput = ({ onModeChange }: AIPromptInputProps) => {
       const data = await response.json()
 
       if (data.results && data.results.length > 0) {
-        // Return the first result (prioritized by our API)
-        return data.results[0]
+        // Find first result that's not in the excluded set
+        for (let i = resultIndex; i < data.results.length; i++) {
+          const result = data.results[i]
+          if (!excludeSoundIds.has(result.id)) {
+            return result
+          }
+        }
+
+        // If all results are duplicates, try from the beginning
+        for (let i = 0; i < Math.min(resultIndex, data.results.length); i++) {
+          const result = data.results[i]
+          if (!excludeSoundIds.has(result.id)) {
+            return result
+          }
+        }
       }
 
       return null
@@ -51,22 +69,44 @@ export const AIPromptInput = ({ onModeChange }: AIPromptInputProps) => {
     }
   }
 
-  const handleGenerate = async (e: React.FormEvent) => {
+  const handleGenerate = async (
+    e: React.FormEvent,
+    forceTemplateMode = false
+  ) => {
     e.preventDefault()
 
     if (!keywords.trim()) return
 
+    // If forced to use template mode (after fallback), ensure it's set
+    const effectiveMode = forceTemplateMode ? true : useSimpleMode
+
     setIsGenerating(true)
     setError(null)
-    setGenerationStatus(
-      useSimpleMode
-        ? "🎨 Creating soundscape template..."
-        : "🤖 AI is analyzing your keywords..."
-    )
+
+    // Detect if this is a duplicate prompt for randomization
+    const isDuplicate = lastPromptRef.current === keywords.trim()
+    const shouldRandomize = isDuplicate
+
+    if (shouldRandomize) {
+      setGenerationStatus(
+        effectiveMode
+          ? "🎲 Creating new variation..."
+          : "🎲 AI is creating a new variation..."
+      )
+    } else {
+      setGenerationStatus(
+        effectiveMode
+          ? "🎨 Creating soundscape template..."
+          : "🤖 AI is analyzing your keywords..."
+      )
+    }
+
+    // Store this prompt for next time
+    lastPromptRef.current = keywords.trim()
 
     try {
-      // Choose endpoint based on mode
-      const endpoint = useSimpleMode
+      // Choose endpoint based on mode (use effective mode to respect forceTemplateMode)
+      const endpoint = effectiveMode
         ? "/api/generate-soundscape-simple"
         : "/api/generate-soundscape"
 
@@ -74,7 +114,10 @@ export const AIPromptInput = ({ onModeChange }: AIPromptInputProps) => {
       const aiResponse = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ keywords: keywords.trim() }),
+        body: JSON.stringify({
+          keywords: keywords.trim(),
+          randomize: shouldRandomize, // Pass randomize flag to bypass cache
+        }),
       })
 
       if (!aiResponse.ok) {
@@ -82,14 +125,20 @@ export const AIPromptInput = ({ onModeChange }: AIPromptInputProps) => {
         console.error("API Error:", errorData)
 
         // Check if we should auto-fallback to template mode
-        if (errorData.fallbackToTemplate && !useSimpleMode) {
+        if (errorData.fallbackToTemplate && !effectiveMode) {
           setError(
-            "AI rate limit reached. Switching to Template mode automatically..."
+            "AI rate limit reached. Switching to Template mode and regenerating..."
           )
+
+          // Switch to template mode
+          setUseSimpleMode(true)
+
+          // Wait a moment, then automatically regenerate with template mode FORCED
           setTimeout(() => {
-            setUseSimpleMode(true)
             setError(null)
-          }, 2000)
+            // Recursively call handleGenerate WITH forceTemplateMode=true
+            handleGenerate(e, true)
+          }, 1500)
           return
         }
 
@@ -117,8 +166,10 @@ export const AIPromptInput = ({ onModeChange }: AIPromptInputProps) => {
       // Step 2: Clear existing layers
       reset()
 
-      // Step 3: Fetch sounds for each layer
+      // Step 3: Fetch sounds for each layer (with duplicate prevention)
       let successCount = 0
+      const usedSoundIds = new Set<number>() // Track used sound IDs to prevent duplicates
+
       for (let i = 0; i < soundscape.layers.length; i++) {
         const layerSpec = soundscape.layers[i]
         setGenerationStatus(
@@ -127,9 +178,13 @@ export const AIPromptInput = ({ onModeChange }: AIPromptInputProps) => {
           }): ${layerSpec.description}`
         )
 
-        const sound = await fetchSoundForLayer(layerSpec)
+        // Fetch sound, automatically excluding already-used IDs
+        const sound = await fetchSoundForLayer(layerSpec, usedSoundIds)
 
         if (sound) {
+          // Track this sound ID to prevent duplicates
+          usedSoundIds.add(sound.id)
+
           // Add layer with AI-recommended volume
           addLayer({
             id: `ai-layer-${sound.id}-${Date.now()}-${i}`,
@@ -141,6 +196,11 @@ export const AIPromptInput = ({ onModeChange }: AIPromptInputProps) => {
             isMuted: false,
           })
           successCount++
+          console.log(`✅ Added unique sound: ${sound.name} (ID: ${sound.id})`)
+        } else {
+          console.log(
+            `⚠️ Could not find unique sound for layer ${i + 1}, skipping...`
+          )
         }
 
         // Small delay to avoid rate limiting

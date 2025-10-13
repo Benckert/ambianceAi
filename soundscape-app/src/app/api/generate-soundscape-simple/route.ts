@@ -1,5 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+// Helper function to randomly vary volume slightly for more variety
+function randomizeVolume(baseVolume: number): number {
+  const variation = (Math.random() - 0.5) * 0.15; // ±7.5% variation
+  return Math.max(0.05, Math.min(0.8, baseVolume + variation));
+}
+
+// Helper function to add slight variation to search queries
+function addSearchVariation(baseQuery: string): string {
+  const variations = ['loop', 'ambient', 'sound', 'atmosphere'];
+  const randomVariation = variations[Math.floor(Math.random() * variations.length)];
+  // Randomly decide whether to add variation (50% chance)
+  return Math.random() > 0.5 ? `${baseQuery} ${randomVariation}` : baseQuery;
+}
+
 // Simple rule-based soundscape generator (no AI required!)
 // Maps keywords to predefined sound combinations
 export async function POST(req: NextRequest) {
@@ -124,9 +138,19 @@ export async function POST(req: NextRequest) {
       };
     }
 
+    // Add randomization to create variety on repeated requests
+    const randomizedTemplate = {
+      layers: selectedTemplate.layers.map((layer: any) => ({
+        ...layer,
+        searchQuery: addSearchVariation(layer.searchQuery),
+        volume: randomizeVolume(layer.volume),
+      })),
+      mixingNotes: selectedTemplate.mixingNotes
+    };
+
     return NextResponse.json({
       success: true,
-      soundscape: selectedTemplate,
+      soundscape: randomizedTemplate,
       keywords: keywords,
       usedTemplate: matchedKeyword || 'custom',
     });

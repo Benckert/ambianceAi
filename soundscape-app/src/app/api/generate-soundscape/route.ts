@@ -38,7 +38,7 @@ function recordRequest(): void {
 
 export async function POST(req: NextRequest) {
   try {
-    const { keywords } = await req.json()
+    const { keywords, randomize = false } = await req.json()
 
     if (!keywords || keywords.trim().length === 0) {
       return NextResponse.json(
@@ -55,37 +55,46 @@ export async function POST(req: NextRequest) {
     }
 
     // Normalize keywords for cache lookup
-    const normalizedKeywords = keywords.trim().toLowerCase();
+    const normalizedKeywords = keywords.trim().toLowerCase()
 
-    // ===== CHECK CACHE FIRST =====
-    const cachedEntry = responseCache.get(normalizedKeywords) as CacheEntry | undefined;
-    if (cachedEntry) {
-      const age = Date.now() - cachedEntry.timestamp;
-      if (age < CACHE_DURATION) {
-        console.log(`✅ Cache hit for: "${normalizedKeywords}"`);
-        return NextResponse.json({
-          success: true,
-          soundscape: cachedEntry.data,
-          keywords: keywords,
-          cached: true,
-        });
-      } else {
-        // Expired cache entry
-        responseCache.delete(normalizedKeywords);
+    // ===== CHECK CACHE FIRST (unless randomize is true) =====
+    if (!randomize) {
+      const cachedEntry = responseCache.get(normalizedKeywords) as
+        | CacheEntry
+        | undefined
+      if (cachedEntry) {
+        const age = Date.now() - cachedEntry.timestamp
+        if (age < CACHE_DURATION) {
+          console.log(`✅ Cache hit for: "${normalizedKeywords}"`)
+          return NextResponse.json({
+            success: true,
+            soundscape: cachedEntry.data,
+            keywords: keywords,
+            cached: true,
+          })
+        } else {
+          // Expired cache entry
+          responseCache.delete(normalizedKeywords)
+        }
       }
+    } else {
+      console.log(
+        `🎲 Randomize mode: bypassing cache for "${normalizedKeywords}"`
+      )
     }
 
     // ===== CHECK RATE LIMIT =====
     if (!canMakeRequest()) {
-      console.warn('⚠️ Rate limit reached, falling back to template mode');
+      console.warn("⚠️ Rate limit reached, falling back to template mode")
       return NextResponse.json(
-        { 
-          error: 'Rate limit reached',
-          details: 'Too many AI requests. Please wait a moment or use Template mode.',
+        {
+          error: "Rate limit reached",
+          details:
+            "Too many AI requests. Please wait a moment or use Template mode.",
           fallbackToTemplate: true,
         },
         { status: 429 }
-      );
+      )
     }
 
     // ===== OPTIMIZATION 3: SHORTENED PROMPT (Reduce Token Usage) =====
@@ -108,7 +117,7 @@ Return JSON:
           content: keywords,
         },
       ],
-      temperature: 0.7,
+      temperature: randomize ? 1.0 : 0.7, // Higher temperature for more variety when randomizing
       max_tokens: 500, // Limit response size
       response_format: { type: "json_object" },
     })
