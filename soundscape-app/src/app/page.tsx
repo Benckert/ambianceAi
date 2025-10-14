@@ -47,7 +47,7 @@ export default function Home() {
           <div className="inline-flex bg-slate-800/80 backdrop-blur-sm rounded-xl p-1.5 border border-slate-700/50 w-full sm:w-auto max-w-md">
             <button
               onClick={() => setUseAI(false)}
-              className={`flex-1 sm:flex-initial px-4 sm:px-6 py-2.5 rounded-lg transition-all flex items-center justify-center gap-2 font-medium cursor-pointer text-sm sm:text-base ${
+              className={`flex-1 sm:w-[160px] px-4 sm:px-6 py-2.5 rounded-lg transition-all flex items-center justify-center gap-2 font-medium cursor-pointer text-sm sm:text-base ${
                 !useAI
                   ? "bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-lg shadow-cyan-500/25"
                   : "text-slate-400 hover:text-slate-200"
@@ -55,14 +55,16 @@ export default function Home() {
             >
               <Search
                 size={16}
-                className="sm:w-[18px] sm:h-[18px]"
+                className="sm:w-[18px] sm:h-[18px] flex-shrink-0"
               />
-              <span className="hidden xs:inline">Manual Search</span>
-              <span className="xs:hidden">Manual</span>
+              <span className="hidden xs:inline flex-shrink-0">
+                Manual Search
+              </span>
+              <span className="xs:hidden flex-shrink-0">Manual</span>
             </button>
             <button
               onClick={() => setUseAI(true)}
-              className={`flex-1 sm:flex-initial px-4 sm:px-6 py-2.5 rounded-lg transition-all flex items-center justify-center gap-2 font-medium cursor-pointer text-sm sm:text-base ${
+              className={`flex-1 sm:w-[160px] px-4 sm:px-6 py-2.5 rounded-lg transition-all flex items-center justify-center gap-2 font-medium cursor-pointer text-sm sm:text-base ${
                 useAI
                   ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg shadow-indigo-500/25"
                   : "text-slate-400 hover:text-slate-200"
@@ -70,10 +72,12 @@ export default function Home() {
             >
               <Sparkles
                 size={16}
-                className="sm:w-[18px] sm:h-[18px]"
+                className="sm:w-[18px] sm:h-[18px] flex-shrink-0"
               />
-              <span className="hidden xs:inline">AI Generator</span>
-              <span className="xs:hidden">AI</span>
+              <span className="hidden xs:inline flex-shrink-0">
+                AI Generator
+              </span>
+              <span className="xs:hidden flex-shrink-0">AI</span>
             </button>
           </div>
         </div>
@@ -97,37 +101,37 @@ export default function Home() {
               <button
                 onClick={togglePlayback}
                 disabled={layers.length === 0}
-                className="px-4 sm:px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl hover:from-emerald-600 hover:to-teal-600 disabled:from-slate-700 disabled:to-slate-700 disabled:cursor-not-allowed cursor-pointer transition-all flex items-center justify-center gap-2 font-medium shadow-lg shadow-emerald-500/20 disabled:shadow-none text-sm sm:text-base"
+                className="w-full sm:w-[130px] px-4 sm:px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl hover:from-emerald-600 hover:to-teal-600 disabled:from-slate-700 disabled:to-slate-700 disabled:cursor-not-allowed cursor-pointer transition-all flex items-center justify-center gap-2 font-medium shadow-lg shadow-emerald-500/20 disabled:shadow-none text-sm sm:text-base"
               >
                 {isPlaying ? (
                   <>
                     <Pause
                       size={18}
-                      className="sm:w-5 sm:h-5"
+                      className="sm:w-5 sm:h-5 flex-shrink-0"
                     />
-                    <span>Pause</span>
+                    <span className="flex-shrink-0">Pause</span>
                   </>
                 ) : (
                   <>
                     <Play
                       size={18}
-                      className="sm:w-5 sm:h-5"
+                      className="sm:w-5 sm:h-5 flex-shrink-0"
                     />
-                    <span>Play</span>
+                    <span className="flex-shrink-0">Play</span>
                   </>
                 )}
               </button>
               <button
                 onClick={reset}
                 disabled={layers.length === 0}
-                className="px-4 sm:px-6 py-3 bg-gradient-to-r from-rose-500 to-pink-500 text-white rounded-xl hover:from-rose-600 hover:to-pink-600 disabled:from-slate-700 disabled:to-slate-700 disabled:cursor-not-allowed cursor-pointer transition-all flex items-center justify-center gap-2 shadow-lg shadow-rose-500/20 disabled:shadow-none text-sm sm:text-base font-medium"
+                className="w-full sm:w-[130px] px-4 sm:px-6 py-3 bg-gradient-to-r from-rose-500 to-pink-500 text-white rounded-xl hover:from-rose-600 hover:to-pink-600 disabled:from-slate-700 disabled:to-slate-700 disabled:cursor-not-allowed cursor-pointer transition-all flex items-center justify-center gap-2 shadow-lg shadow-rose-500/20 disabled:shadow-none text-sm sm:text-base font-medium"
                 title="Clear all layers"
               >
                 <RotateCcw
                   size={18}
-                  className="sm:w-5 sm:h-5"
+                  className="sm:w-5 sm:h-5 flex-shrink-0"
                 />
-                <span>Reset</span>
+                <span className="flex-shrink-0">Reset</span>
               </button>
             </div>
           </div>
