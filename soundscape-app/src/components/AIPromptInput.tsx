@@ -15,8 +15,10 @@ export const AIPromptInput = ({ onModeChange }: AIPromptInputProps) => {
   const [error, setError] = useState<string | null>(null)
   const [generationStatus, setGenerationStatus] = useState<string>("")
   const [useSimpleMode, setUseSimpleMode] = useState(true) // Default to free mode
+  const [showInfo, setShowInfo] = useState(false) // Info banner visibility
   const addLayer = useSoundscapeStore((state) => state.addLayer)
   const reset = useSoundscapeStore((state) => state.reset)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   // Track last prompt to detect duplicates
   const lastPromptRef = useRef<string>("")
@@ -75,7 +77,10 @@ export const AIPromptInput = ({ onModeChange }: AIPromptInputProps) => {
   ) => {
     e.preventDefault()
 
-    if (!keywords.trim()) return
+    if (!keywords.trim()) {
+      inputRef.current?.focus()
+      return
+    }
 
     // If forced to use template mode (after fallback), ensure it's set
     const effectiveMode = forceTemplateMode ? true : useSimpleMode
@@ -261,24 +266,7 @@ export const AIPromptInput = ({ onModeChange }: AIPromptInputProps) => {
         </p>
       </div>
 
-      {/* Rate Limit Info Banner */}
-      {!useSimpleMode && (
-        <div className="p-3 bg-amber-950/30 border border-amber-800/50 rounded-xl backdrop-blur-sm">
-          <div className="flex items-start gap-2">
-            <span className="text-amber-400 text-sm flex-shrink-0">⚡</span>
-            <div className="flex-1">
-              <p className="text-xs sm:text-sm text-amber-300 font-medium mb-1">
-                AI Mode Optimizations Active:
-              </p>
-              <ul className="text-xs sm:text-sm text-amber-400/80 space-y-0.5 list-disc list-inside">
-                <li>Responses cached for 24h (instant re-use)</li>
-                <li>Rate limited to 2 requests/min (stays under 3 RPM)</li>
-                <li>Auto-fallback to Template mode if limit reached</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Rate Limit Info Banner - Removed from here */}
 
       <form
         onSubmit={handleGenerate}
@@ -286,6 +274,7 @@ export const AIPromptInput = ({ onModeChange }: AIPromptInputProps) => {
       >
         <div className="flex-1">
           <input
+            ref={inputRef}
             type="text"
             value={keywords}
             onChange={(e) => setKeywords(e.target.value)}
@@ -300,7 +289,7 @@ export const AIPromptInput = ({ onModeChange }: AIPromptInputProps) => {
         </div>
         <button
           type="submit"
-          disabled={isGenerating || !keywords.trim()}
+          disabled={isGenerating}
           className={`px-4 sm:px-6 py-3 rounded-xl text-white font-medium transition-all flex items-center justify-center gap-2 shadow-lg cursor-pointer text-sm sm:text-base whitespace-nowrap ${
             useSimpleMode
               ? "bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 shadow-emerald-500/25"
@@ -327,6 +316,40 @@ export const AIPromptInput = ({ onModeChange }: AIPromptInputProps) => {
         </button>
       </form>
 
+      {/* Collapsible Info Banner - Below form */}
+      {!useSimpleMode && (
+        <div>
+          <button
+            type="button"
+            onClick={() => setShowInfo(!showInfo)}
+            className="w-full p-3 bg-indigo-950/30 border border-indigo-800/40 rounded-xl backdrop-blur-sm hover:bg-indigo-950/40 transition-colors cursor-pointer"
+          >
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <span className="text-indigo-400 text-sm flex-shrink-0">
+                  💡
+                </span>
+                <span className="text-xs sm:text-sm text-indigo-300 font-medium">
+                  Smart Features Enabled
+                </span>
+              </div>
+              <span className="text-indigo-400 text-xs">
+                {showInfo ? "▼" : "▶"}
+              </span>
+            </div>
+          </button>
+          {showInfo && (
+            <div className="mt-2 p-3 bg-indigo-950/20 border border-indigo-800/30 rounded-xl backdrop-blur-sm">
+              <ul className="text-xs sm:text-sm text-indigo-400/70 space-y-0.5 list-disc list-inside">
+                <li>Responses cached for 24h (instant re-use)</li>
+                <li>Rate limited to 2 requests/min (stays under 3 RPM)</li>
+                <li>Auto-fallback to Template mode if limit reached</li>
+              </ul>
+            </div>
+          )}
+        </div>
+      )}
+
       {generationStatus && (
         <div className="p-4 bg-indigo-950/30 border border-indigo-800/50 rounded-xl text-indigo-300 text-sm backdrop-blur-sm">
           {generationStatus}
@@ -341,7 +364,7 @@ export const AIPromptInput = ({ onModeChange }: AIPromptInputProps) => {
 
       <div className="text-xs text-slate-500 space-y-1">
         <p>
-          💡 <strong>Pro tip:</strong> Be descriptive! Examples:
+          <strong>Pro tip:</strong> Be descriptive! Examples:
         </p>
         <ul className="list-disc list-inside ml-4 space-y-1 text-slate-600">
           <li>"Rainy forest night with distant thunder"</li>

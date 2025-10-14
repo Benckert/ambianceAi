@@ -212,8 +212,8 @@ export default function Home() {
                   <li>• "Mysterious sci-fi spaceship interior"</li>
                 </ul>
               </div>
-              <div className="mt-2 p-2 bg-amber-950/30 rounded-xl border border-amber-800/50">
-                <p className="text-xs sm:text-sm text-amber-300">
+              <div className="mt-2 p-2 bg-indigo-950/30 rounded-xl border border-indigo-800/40">
+                <p className="text-xs sm:text-sm text-indigo-300">
                   ⚡ <strong>Smart Caching:</strong> Repeated searches are
                   instant!
                 </p>
@@ -223,7 +223,7 @@ export default function Home() {
 
           <div className="mt-4 pt-4 border-t border-slate-700/50">
             <p className="text-xs sm:text-sm text-slate-400">
-              💡 <strong>Master Loop System:</strong> Sounds play in 30-second
+              <strong>Master Loop System:</strong> Sounds play in 30-second
               cycles with natural variation (±1.5s random timing). Short clips
               and non-looped sounds get automatic fade-in/fade-out for smooth
               playback.

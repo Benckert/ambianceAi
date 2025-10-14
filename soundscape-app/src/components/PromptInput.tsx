@@ -1,23 +1,27 @@
 "use client";
 
-import { useState } from "react";
-import { Search, Loader2 } from "lucide-react";
-import { useSoundscapeStore } from "@/hooks/useSoundscapeStore";
-import { FreeSoundClip } from "@/types/soundscape";
+import { useState, useRef } from "react"
+import { Search, Loader2 } from "lucide-react"
+import { useSoundscapeStore } from "@/hooks/useSoundscapeStore"
+import { FreeSoundClip } from "@/types/soundscape"
 
 export const PromptInput = () => {
-  const [prompt, setPrompt] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [results, setResults] = useState<FreeSoundClip[]>([]);
-  const [error, setError] = useState<string | null>(null);
-  const addLayer = useSoundscapeStore((state) => state.addLayer);
+  const [prompt, setPrompt] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const [results, setResults] = useState<FreeSoundClip[]>([])
+  const [error, setError] = useState<string | null>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const addLayer = useSoundscapeStore((state) => state.addLayer)
   const removeLayer = useSoundscapeStore((state) => state.removeLayer)
   const layers = useSoundscapeStore((state) => state.layers)
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!prompt.trim()) return
+    if (!prompt.trim()) {
+      inputRef.current?.focus()
+      return
+    }
 
     setIsLoading(true)
     setError(null)
@@ -100,6 +104,7 @@ export const PromptInput = () => {
         className="flex flex-col sm:flex-row gap-2"
       >
         <input
+          ref={inputRef}
           type="text"
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
@@ -109,7 +114,7 @@ export const PromptInput = () => {
         />
         <button
           type="submit"
-          disabled={isLoading || !prompt.trim()}
+          disabled={isLoading}
           className="px-4 sm:px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-xl hover:from-cyan-600 hover:to-blue-600 disabled:from-slate-700 disabled:to-slate-700 disabled:cursor-not-allowed cursor-pointer transition-all flex items-center justify-center gap-2 font-medium shadow-lg shadow-cyan-500/25 disabled:shadow-none text-sm sm:text-base whitespace-nowrap"
         >
           {isLoading ? (
@@ -223,4 +228,4 @@ export const PromptInput = () => {
       )}
     </div>
   )
-};
+}
