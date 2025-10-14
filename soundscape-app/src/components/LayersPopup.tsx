@@ -2,7 +2,7 @@
 
 import { useSoundscapeStore } from "@/hooks/useSoundscapeStore";
 import { LayersList } from "./LayerControl";
-import { X } from "lucide-react";
+import { X, Music } from "lucide-react"
 import { useEffect, useRef } from "react"
 
 interface LayersPopupProps {
@@ -90,7 +90,10 @@ export const LayersPopup = ({ isOpen, onClose }: LayersPopupProps) => {
         <div className="flex-1 overflow-y-auto p-4 sm:p-6">
           {layers.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center py-12">
-              <div className="text-6xl mb-4">🎵</div>
+              <Music
+                size={60}
+                className="text-slate-500 mb-4"
+              />
               <p className="text-slate-400 text-sm sm:text-base">
                 No layers yet. Add some sounds to get started!
               </p>

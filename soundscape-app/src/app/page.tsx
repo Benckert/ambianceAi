@@ -17,6 +17,20 @@ import {
   VolumeX,
   Layers3,
   Music,
+  Lightbulb,
+  Palette,
+  Bot,
+  Zap,
+  TreePine,
+  CloudRain,
+  Waves,
+  Coffee,
+  Building2,
+  Moon,
+  Rocket,
+  Flower2,
+  Flame,
+  CloudLightning,
 } from "lucide-react"
 
 export default function Home() {
@@ -141,8 +155,12 @@ export default function Home() {
                 <li>Press Play to start your soundscape</li>
               </ol>
               <div className="mt-3 p-3 bg-slate-900/50 rounded-xl border border-slate-700/50">
-                <p className="text-xs sm:text-sm font-semibold text-cyan-300 mb-1">
-                  💡 Search Tips:
+                <p className="text-xs sm:text-sm font-semibold text-cyan-300 mb-1 flex items-center gap-1.5">
+                  <Lightbulb
+                    size={14}
+                    className="sm:w-4 sm:h-4"
+                  />{" "}
+                  Search Tips:
                 </p>
                 <ul className="text-xs sm:text-sm text-slate-400 space-y-1">
                   <li>• Try: "ocean waves", "forest birds", "rain thunder"</li>
@@ -162,39 +180,83 @@ export default function Home() {
                 <li>Press Play to start your ambient experience</li>
               </ol>
               <div className="mt-3 p-3 bg-emerald-950/30 rounded-xl border border-emerald-800/50">
-                <p className="text-xs sm:text-sm font-semibold text-emerald-300 mb-1">
-                  🎨 Available Templates:
+                <p className="text-xs sm:text-sm font-semibold text-emerald-300 mb-1 flex items-center gap-1.5">
+                  <Palette
+                    size={14}
+                    className="sm:w-4 sm:h-4"
+                  />{" "}
+                  Available Templates:
                 </p>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 text-xs sm:text-sm text-slate-400 mt-2">
-                  <div>
-                    <span className="text-emerald-400">🌲</span> forest
+                  <div className="flex items-center gap-1.5">
+                    <TreePine
+                      size={14}
+                      className="text-emerald-400 flex-shrink-0"
+                    />{" "}
+                    forest
                   </div>
-                  <div>
-                    <span className="text-cyan-400">🌧️</span> rain
+                  <div className="flex items-center gap-1.5">
+                    <CloudRain
+                      size={14}
+                      className="text-cyan-400 flex-shrink-0"
+                    />{" "}
+                    rain
                   </div>
-                  <div>
-                    <span className="text-blue-400">🌊</span> ocean
+                  <div className="flex items-center gap-1.5">
+                    <Waves
+                      size={14}
+                      className="text-blue-400 flex-shrink-0"
+                    />{" "}
+                    ocean
                   </div>
-                  <div>
-                    <span className="text-amber-400">☕</span> cafe
+                  <div className="flex items-center gap-1.5">
+                    <Coffee
+                      size={14}
+                      className="text-amber-400 flex-shrink-0"
+                    />{" "}
+                    cafe
                   </div>
-                  <div>
-                    <span className="text-slate-400">🏙️</span> city
+                  <div className="flex items-center gap-1.5">
+                    <Building2
+                      size={14}
+                      className="text-slate-400 flex-shrink-0"
+                    />{" "}
+                    city
                   </div>
-                  <div>
-                    <span className="text-indigo-400">🌙</span> night
+                  <div className="flex items-center gap-1.5">
+                    <Moon
+                      size={14}
+                      className="text-indigo-400 flex-shrink-0"
+                    />{" "}
+                    night
                   </div>
-                  <div>
-                    <span className="text-violet-400">🚀</span> space
+                  <div className="flex items-center gap-1.5">
+                    <Rocket
+                      size={14}
+                      className="text-violet-400 flex-shrink-0"
+                    />{" "}
+                    space
                   </div>
-                  <div>
-                    <span className="text-purple-400">🧘</span> meditation
+                  <div className="flex items-center gap-1.5">
+                    <Flower2
+                      size={14}
+                      className="text-purple-400 flex-shrink-0"
+                    />{" "}
+                    meditation
                   </div>
-                  <div>
-                    <span className="text-orange-400">🔥</span> fire
+                  <div className="flex items-center gap-1.5">
+                    <Flame
+                      size={14}
+                      className="text-orange-400 flex-shrink-0"
+                    />{" "}
+                    fire
                   </div>
-                  <div>
-                    <span className="text-sky-400">⛈️</span> storm
+                  <div className="flex items-center gap-1.5">
+                    <CloudLightning
+                      size={14}
+                      className="text-sky-400 flex-shrink-0"
+                    />{" "}
+                    storm
                   </div>
                 </div>
                 <p className="text-xs sm:text-sm text-slate-500 mt-2">
@@ -213,8 +275,12 @@ export default function Home() {
                 <li>Press Play to enjoy your creation</li>
               </ol>
               <div className="mt-3 p-3 bg-indigo-950/30 rounded-xl border border-indigo-800/50">
-                <p className="text-xs sm:text-sm font-semibold text-indigo-300 mb-1">
-                  🤖 AI Examples:
+                <p className="text-xs sm:text-sm font-semibold text-indigo-300 mb-1 flex items-center gap-1.5">
+                  <Bot
+                    size={14}
+                    className="sm:w-4 sm:h-4"
+                  />{" "}
+                  AI Examples:
                 </p>
                 <ul className="text-xs sm:text-sm text-slate-400 space-y-1">
                   <li>• "Peaceful forest morning with distant birds"</li>
@@ -224,9 +290,12 @@ export default function Home() {
                 </ul>
               </div>
               <div className="mt-2 p-2 bg-indigo-950/30 rounded-xl border border-indigo-800/40">
-                <p className="text-xs sm:text-sm text-indigo-300">
-                  ⚡ <strong>Smart Caching:</strong> Repeated searches are
-                  instant!
+                <p className="text-xs sm:text-sm text-indigo-300 flex items-center gap-1.5">
+                  <Zap
+                    size={14}
+                    className="sm:w-4 sm:h-4 flex-shrink-0"
+                  />{" "}
+                  <strong>Smart Caching:</strong> Repeated searches are instant!
                 </p>
               </div>
             </>

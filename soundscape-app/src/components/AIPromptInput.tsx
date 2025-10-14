@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react"
-import { Sparkles, Loader2 } from "lucide-react"
+import { Sparkles, Loader2, Palette, Bot, Lightbulb } from "lucide-react"
 import { useSoundscapeStore } from "@/hooks/useSoundscapeStore"
 import { AILayerSpec, FreeSoundClip } from "@/types/soundscape"
 
@@ -101,8 +101,8 @@ export const AIPromptInput = ({ onModeChange }: AIPromptInputProps) => {
     } else {
       setGenerationStatus(
         effectiveMode
-          ? "🎨 Creating soundscape template..."
-          : "🤖 AI is analyzing your keywords..."
+          ? "Creating soundscape template..."
+          : "AI is analyzing your keywords..."
       )
     }
 
@@ -257,11 +257,27 @@ export const AIPromptInput = ({ onModeChange }: AIPromptInputProps) => {
               />
             </button>
             <span
-              className={`text-xs sm:text-sm font-medium ${
+              className={`text-xs sm:text-sm font-medium flex items-center gap-1.5 ${
                 useSimpleMode ? "text-teal-500" : "text-purple-500"
               }`}
             >
-              {useSimpleMode ? "🎨 Template" : "🤖 AI"}
+              {useSimpleMode ? (
+                <>
+                  <Palette
+                    size={14}
+                    className="sm:w-4 sm:h-4 flex-shrink-0"
+                  />{" "}
+                  Template
+                </>
+              ) : (
+                <>
+                  <Bot
+                    size={14}
+                    className="sm:w-4 sm:h-4 flex-shrink-0"
+                  />{" "}
+                  AI
+                </>
+              )}
             </span>
           </div>
           <p
@@ -336,9 +352,10 @@ export const AIPromptInput = ({ onModeChange }: AIPromptInputProps) => {
           >
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
-                <span className="text-indigo-400 text-sm flex-shrink-0">
-                  💡
-                </span>
+                <Lightbulb
+                  size={14}
+                  className="text-indigo-400 sm:w-4 sm:h-4 flex-shrink-0"
+                />
                 <span className="text-xs sm:text-sm text-indigo-300 font-medium">
                   Smart Features Enabled
                 </span>
