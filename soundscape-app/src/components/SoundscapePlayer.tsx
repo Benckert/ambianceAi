@@ -16,6 +16,7 @@ interface ScheduledPlay {
 export const SoundscapePlayer = () => {
   const layers = useSoundscapeStore((state) => state.layers)
   const isPlaying = useSoundscapeStore((state) => state.isPlaying)
+  const masterVolume = useSoundscapeStore((state) => state.masterVolume)
   const howlsRef = useRef<Map<string, Howl>>(new Map())
   const previousVolumesRef = useRef<Map<string, number>>(new Map())
   const scheduledPlaysRef = useRef<Map<string, ScheduledPlay>>(new Map())
@@ -47,7 +48,7 @@ export const SoundscapePlayer = () => {
 
       const timeout = setTimeout(() => {
         if (howl && isPlaying) {
-          const targetVolume = layer.isMuted ? 0 : layer.volume
+          const targetVolume = (layer.isMuted ? 0 : layer.volume) * masterVolume
 
           if (needsFade && targetVolume > 0) {
             // Apply fade-in for short/non-looped clips
@@ -187,7 +188,7 @@ export const SoundscapePlayer = () => {
 
       if (!howl) {
         // Create new Howl instance with target volume immediately
-        const targetVolume = layer.isMuted ? 0 : layer.volume
+        const targetVolume = (layer.isMuted ? 0 : layer.volume) * masterVolume
 
         howl = new Howl({
           src: [layer.url],
@@ -232,7 +233,8 @@ export const SoundscapePlayer = () => {
       if (howl) {
         // Update volume instantly (no crossfade, no restart)
         const previousVolume = previousVolumesRef.current.get(layer.id)
-        const effectiveVolume = layer.isMuted ? 0 : layer.volume
+        const effectiveVolume =
+          (layer.isMuted ? 0 : layer.volume) * masterVolume
 
         if (previousVolume !== undefined && previousVolume !== layer.volume) {
           howl.volume(effectiveVolume) // Instant volume change
@@ -246,7 +248,7 @@ export const SoundscapePlayer = () => {
         }
       }
     })
-  }, [layers]) // Run on any layer change, but won't restart master loop
+  }, [layers, masterVolume]) // Run on any layer change or master volume change, but won't restart master loop
 
   // Cleanup all Howl instances on unmount
   useEffect(() => {

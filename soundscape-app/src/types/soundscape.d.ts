@@ -11,8 +11,10 @@ export interface Layer {
 export interface SoundscapeState {
   layers: Layer[]
   isPlaying: boolean
+  masterVolume: number
   addLayer: (layer: Layer) => void
   setLayerVolume: (id: string, volume: number) => void
+  setMasterVolume: (volume: number) => void
   toggleLayerMute: (id: string) => void
   removeLayer: (id: string) => void
   togglePlayback: () => void

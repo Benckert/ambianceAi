@@ -2,25 +2,37 @@
 
 import { useState } from "react"
 import { SoundscapePlayer } from "@/components/SoundscapePlayer";
-import { LayersList } from "@/components/LayerControl";
+import { LayersPopup } from "@/components/LayersPopup"
 import { AIPromptInput } from "@/components/AIPromptInput"
 import { PromptInput } from "@/components/PromptInput"
-import { useSoundscapeStore } from "@/hooks/useSoundscapeStore";
-import { Play, Pause, RotateCcw, Sparkles, Search } from "lucide-react"
+import { Slider } from "@/components/ui/slider"
+import { useSoundscapeStore } from "@/hooks/useSoundscapeStore"
+import {
+  Play,
+  Pause,
+  RotateCcw,
+  Sparkles,
+  Search,
+  Volume2,
+  Layers3,
+} from "lucide-react"
 
 export default function Home() {
   const [useAI, setUseAI] = useState(false)
-  const [aiUseTemplate, setAiUseTemplate] = useState(true) // Track AI sub-mode
+  const [aiUseTemplate, setAiUseTemplate] = useState(true)
+  const [showLayersPopup, setShowLayersPopup] = useState(false)
   const isPlaying = useSoundscapeStore((state) => state.isPlaying)
   const togglePlayback = useSoundscapeStore((state) => state.togglePlayback)
   const reset = useSoundscapeStore((state) => state.reset)
   const layers = useSoundscapeStore((state) => state.layers)
+  const masterVolume = useSoundscapeStore((state) => state.masterVolume)
+  const setMasterVolume = useSoundscapeStore((state) => state.setMasterVolume)
 
   // Determine current mode for instructions
   const currentMode = !useAI ? "manual" : aiUseTemplate ? "template" : "ai"
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900">
+    <main className="min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 pb-24">
       <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8 max-w-4xl">
         {/* Header */}
         <div className="text-center mb-8 sm:mb-12">
@@ -89,55 +101,6 @@ export default function Home() {
           ) : (
             <PromptInput />
           )}
-        </div>
-
-        {/* Control Panel */}
-        <div className="bg-slate-800/40 backdrop-blur-md rounded-2xl p-4 sm:p-6 mb-8 border border-slate-700/50">
-          <div className="flex flex-col gap-4 mb-6">
-            <h2 className="text-lg sm:text-xl font-semibold text-white">
-              Your Soundscape
-            </h2>
-            <div className="grid grid-cols-2 gap-2 sm:flex sm:gap-3">
-              <button
-                onClick={togglePlayback}
-                disabled={layers.length === 0}
-                className="w-full sm:w-[130px] px-4 sm:px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl hover:from-emerald-600 hover:to-teal-600 disabled:from-slate-700 disabled:to-slate-700 disabled:cursor-not-allowed cursor-pointer transition-all flex items-center justify-center gap-2 font-medium shadow-lg shadow-emerald-500/20 disabled:shadow-none text-sm sm:text-base"
-              >
-                {isPlaying ? (
-                  <>
-                    <Pause
-                      size={18}
-                      className="sm:w-5 sm:h-5 flex-shrink-0"
-                    />
-                    <span className="flex-shrink-0">Pause</span>
-                  </>
-                ) : (
-                  <>
-                    <Play
-                      size={18}
-                      className="sm:w-5 sm:h-5 flex-shrink-0"
-                    />
-                    <span className="flex-shrink-0">Play</span>
-                  </>
-                )}
-              </button>
-              <button
-                onClick={reset}
-                disabled={layers.length === 0}
-                className="w-full sm:w-[130px] px-4 sm:px-6 py-3 bg-gradient-to-r from-rose-500 to-pink-500 text-white rounded-xl hover:from-rose-600 hover:to-pink-600 disabled:from-slate-700 disabled:to-slate-700 disabled:cursor-not-allowed cursor-pointer transition-all flex items-center justify-center gap-2 shadow-lg shadow-rose-500/20 disabled:shadow-none text-sm sm:text-base font-medium"
-                title="Clear all layers"
-              >
-                <RotateCcw
-                  size={18}
-                  className="sm:w-5 sm:h-5 flex-shrink-0"
-                />
-                <span className="flex-shrink-0">Reset</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Layers List */}
-          <LayersList />
         </div>
 
         {/* Instructions */}
@@ -280,6 +243,83 @@ export default function Home() {
           </p>
         </div>
       </div>
+
+      {/* Spotify-Style Bottom Control Bar */}
+      <div className="fixed bottom-0 left-0 right-0 bg-slate-900/95 backdrop-blur-xl border-t border-slate-700/50 shadow-2xl z-50">
+        <div className="container mx-auto px-4 py-3 max-w-7xl">
+          <div className="flex items-center justify-center gap-4">
+            {/* Play/Pause Button */}
+            <button
+              onClick={togglePlayback}
+              disabled={layers.length === 0}
+              className="w-10 h-10 flex-shrink-0 bg-gradient-to-br from-emerald-400 to-green-500 text-white rounded-full hover:scale-105 hover:shadow-lg hover:shadow-emerald-500/50 disabled:from-slate-700 disabled:to-slate-700 disabled:text-slate-500 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-none transition-all flex items-center justify-center shadow-md shadow-emerald-500/30"
+            >
+              {isPlaying ? (
+                <Pause
+                  size={20}
+                  fill="currentColor"
+                />
+              ) : (
+                <Play
+                  size={20}
+                  fill="currentColor"
+                  className="ml-0.5"
+                />
+              )}
+            </button>
+
+            {/* Reset Button */}
+            <button
+              onClick={reset}
+              disabled={layers.length === 0}
+              className="w-8 h-8 flex-shrink-0 text-slate-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              title="Clear all"
+            >
+              <RotateCcw size={18} />
+            </button>
+
+            {/* Master Volume Control */}
+            <div className="flex-1 flex items-center gap-3 max-w-xs">
+              <Volume2
+                size={18}
+                className="text-slate-400 flex-shrink-0"
+              />
+              <Slider
+                value={[masterVolume * 100]}
+                onValueChange={(value) => setMasterVolume(value[0] / 100)}
+                max={100}
+                step={1}
+                disabled={layers.length === 0}
+                className="flex-1"
+              />
+              <span className="text-xs text-slate-400 w-10 text-right">
+                {Math.round(masterVolume * 100)}%
+              </span>
+            </div>
+
+            {/* Layers Pill Button */}
+            <button
+              onClick={() => setShowLayersPopup(true)}
+              disabled={layers.length === 0}
+              className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-full border border-slate-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Layers3
+                size={16}
+                className="text-cyan-400"
+              />
+              <span className="text-sm font-medium text-white">
+                {layers.length}
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Layers Popup */}
+      <LayersPopup
+        isOpen={showLayersPopup}
+        onClose={() => setShowLayersPopup(false)}
+      />
 
       {/* Audio Player Component (no UI) */}
       <SoundscapePlayer />

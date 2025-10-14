@@ -1,42 +1,36 @@
 "use client";
 
 import { useSoundscapeStore } from "@/hooks/useSoundscapeStore";
-import { Volume2, VolumeX, X } from "lucide-react";
-import { Layer } from "@/types/soundscape";
+import { Slider } from "@/components/ui/slider"
+import { Volume2, VolumeX, X } from "lucide-react"
+import { Layer } from "@/types/soundscape"
 
 interface LayerControlProps {
-  layer: Layer;
+  layer: Layer
 }
 
 // Utility function to truncate long filenames
 const truncateFilename = (filename: string, maxLength: number = 40): string => {
-  if (filename.length <= maxLength) return filename;
-  
-  const extension = filename.split('.').pop();
-  const nameWithoutExt = filename.slice(0, filename.lastIndexOf('.'));
-  
+  if (filename.length <= maxLength) return filename
+
+  const extension = filename.split(".").pop()
+  const nameWithoutExt = filename.slice(0, filename.lastIndexOf("."))
+
   if (extension && nameWithoutExt.length > maxLength - extension.length - 4) {
-    const truncated = nameWithoutExt.slice(0, maxLength - extension.length - 4);
-    return `${truncated}...${extension}`;
+    const truncated = nameWithoutExt.slice(0, maxLength - extension.length - 4)
+    return `${truncated}...${extension}`
   }
-  
-  return filename.slice(0, maxLength - 3) + '...';
-};
+
+  return filename.slice(0, maxLength - 3) + "..."
+}
 
 export const LayerControl = ({ layer }: LayerControlProps) => {
   const setLayerVolume = useSoundscapeStore((state) => state.setLayerVolume)
   const toggleLayerMute = useSoundscapeStore((state) => state.toggleLayerMute)
   const removeLayer = useSoundscapeStore((state) => state.removeLayer)
 
-  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const volume = parseFloat(e.target.value)
-
-    // If layer is muted and volume changes, unmute it
-    if (isMuted) {
-      toggleLayerMute(layer.id)
-    }
-
-    setLayerVolume(layer.id, volume)
+  const handleVolumeChange = (value: number[]) => {
+    setLayerVolume(layer.id, value[0] / 100)
   }
 
   const handleToggleMute = () => {
@@ -78,11 +72,6 @@ export const LayerControl = ({ layer }: LayerControlProps) => {
                 size={18}
                 className="text-red-400 sm:w-5 sm:h-5"
               />
-            ) : layer.volume === 0 ? (
-              <VolumeX
-                size={18}
-                className="sm:w-5 sm:h-5"
-              />
             ) : (
               <Volume2
                 size={18}
@@ -90,17 +79,15 @@ export const LayerControl = ({ layer }: LayerControlProps) => {
               />
             )}
           </button>
-          <input
-            type="range"
-            min="0"
-            max="1"
-            step="0.01"
-            value={layer.volume}
-            onChange={handleVolumeChange}
-            className="flex-1 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
+          <Slider
+            value={[layer.volume * 100]}
+            onValueChange={handleVolumeChange}
+            max={100}
+            step={1}
+            className="flex-1"
           />
           <span className="text-xs text-gray-400 w-12 sm:w-14 text-right flex-shrink-0">
-            {isMuted ? "Muted" : `${Math.round(layer.volume * 100)}%`}
+            {Math.round(layer.volume * 100)}%
           </span>
         </div>
       </div>
