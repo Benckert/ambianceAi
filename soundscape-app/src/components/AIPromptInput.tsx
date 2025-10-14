@@ -237,7 +237,7 @@ export const AIPromptInput = ({ onModeChange }: AIPromptInputProps) => {
   return (
     <div className="space-y-4">
       {/* Mode Toggle */}
-      <div className="flex flex-col gap-3 p-3 bg-slate-800/60 backdrop-blur-sm rounded-xl border border-slate-700/50">
+      <div className="p-3 bg-slate-800/60 backdrop-blur-sm rounded-xl border border-slate-700/50">
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2 sm:gap-3">
             <span className="text-xs sm:text-sm text-slate-400">Mode:</span>
@@ -256,16 +256,24 @@ export const AIPromptInput = ({ onModeChange }: AIPromptInputProps) => {
                 }`}
               />
             </button>
-            <span className="text-xs sm:text-sm font-medium text-white">
+            <span
+              className={`text-xs sm:text-sm font-medium ${
+                useSimpleMode ? "text-teal-500" : "text-purple-500"
+              }`}
+            >
               {useSimpleMode ? "🎨 Template" : "🤖 AI"}
             </span>
           </div>
+          <p
+            className={`text-xs ${
+              useSimpleMode ? "text-teal-500" : "text-purple-500"
+            } hidden sm:block`}
+          >
+            {useSimpleMode
+              ? "Uses predefined templates (free)"
+              : "Uses OpenAI GPT-3.5 (cached & rate-limited)"}
+          </p>
         </div>
-        <p className="text-xs text-slate-500">
-          {useSimpleMode
-            ? "Uses predefined templates (free)"
-            : "Uses OpenAI GPT-3.5 (cached & rate-limited)"}
-        </p>
       </div>
 
       {/* Rate Limit Info Banner - Removed from here */}

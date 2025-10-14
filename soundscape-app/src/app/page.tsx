@@ -111,7 +111,15 @@ export default function Home() {
 
         {/* Instructions */}
         <div className="bg-slate-800/40 backdrop-blur-md border border-slate-700/50 rounded-2xl p-4 sm:p-6">
-          <h3 className="text-base sm:text-lg font-semibold text-cyan-400 mb-3">
+          <h3
+            className={`text-base sm:text-lg font-semibold mb-3 ${
+              currentMode === "manual"
+                ? "text-cyan-300"
+                : currentMode === "template"
+                ? "text-emerald-300"
+                : "text-indigo-300"
+            }`}
+          >
             How to use{" "}
             {currentMode === "manual"
               ? "Manual Search"
@@ -242,7 +250,13 @@ export default function Home() {
               href="https://freesound.org"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-cyan-400 hover:text-cyan-300 transition-colors"
+              className={`font-medium bg-gradient-to-r bg-clip-text text-transparent transition-all ${
+                currentMode === "manual"
+                  ? "from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400"
+                  : currentMode === "template"
+                  ? "from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400"
+                  : "from-indigo-500 to-purple-500 hover:from-indigo-400 hover:to-purple-400"
+              }`}
             >
               FreeSound.org
             </a>
