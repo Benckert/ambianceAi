@@ -14,7 +14,7 @@ export const AIPromptInput = ({ onModeChange }: AIPromptInputProps) => {
   const [isGenerating, setIsGenerating] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [generationStatus, setGenerationStatus] = useState<string>("")
-  const [useSimpleMode, setUseSimpleMode] = useState(true) // Default to free mode
+  const [useSimpleMode, setUseSimpleMode] = useState(false) // Default to AI mode
   const [showInfo, setShowInfo] = useState(false) // Info banner visibility
   const addLayer = useSoundscapeStore((state) => state.addLayer)
   const reset = useSoundscapeStore((state) => state.reset)

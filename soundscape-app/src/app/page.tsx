@@ -19,8 +19,8 @@ import {
 } from "lucide-react"
 
 export default function Home() {
-  const [useAI, setUseAI] = useState(false)
-  const [aiUseTemplate, setAiUseTemplate] = useState(true)
+  const [useAI, setUseAI] = useState(true)
+  const [aiUseTemplate, setAiUseTemplate] = useState(false)
   const [showLayersPopup, setShowLayersPopup] = useState(false)
   const isPlaying = useSoundscapeStore((state) => state.isPlaying)
   const togglePlayback = useSoundscapeStore((state) => state.togglePlayback)
