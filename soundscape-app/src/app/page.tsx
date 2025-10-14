@@ -36,7 +36,7 @@ export default function Home() {
   const currentMode = !useAI ? "manual" : aiUseTemplate ? "template" : "ai"
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 pb-14">
+    <main className="min-h-[calc(100vh+1px)] bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 pb-14">
       <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8 max-w-4xl">
         {/* Header */}
         <div className="text-center mb-8 sm:mb-12">
