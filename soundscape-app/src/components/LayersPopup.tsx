@@ -3,41 +3,60 @@
 import { useSoundscapeStore } from "@/hooks/useSoundscapeStore";
 import { LayersList } from "./LayerControl";
 import { X } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react"
 
 interface LayersPopupProps {
-  isOpen: boolean;
-  onClose: () => void;
+  isOpen: boolean
+  onClose: () => void
 }
 
 export const LayersPopup = ({ isOpen, onClose }: LayersPopupProps) => {
-  const layers = useSoundscapeStore((state) => state.layers);
+  const layers = useSoundscapeStore((state) => state.layers)
+  const mouseDownTargetRef = useRef<EventTarget | null>(null)
 
   // Close on Escape key
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
+      if (e.key === "Escape") onClose()
+    }
 
     if (isOpen) {
-      document.addEventListener("keydown", handleEscape);
-      document.body.style.overflow = "hidden";
+      document.addEventListener("keydown", handleEscape)
+      document.body.style.overflow = "hidden"
     }
 
     return () => {
-      document.removeEventListener("keydown", handleEscape);
-      document.body.style.overflow = "unset";
-    };
-  }, [isOpen, onClose]);
+      document.removeEventListener("keydown", handleEscape)
+      document.body.style.overflow = "unset"
+    }
+  }, [isOpen, onClose])
 
-  if (!isOpen) return null;
+  const handleBackdropMouseDown = (e: React.MouseEvent) => {
+    // Track where the mouse down happened
+    mouseDownTargetRef.current = e.target
+  }
+
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    // Only close if both mousedown and mouseup happened on the backdrop
+    // This prevents closing when dragging ends outside the modal
+    if (
+      e.target === e.currentTarget &&
+      mouseDownTargetRef.current === e.target
+    ) {
+      onClose()
+    }
+    mouseDownTargetRef.current = null
+  }
+
+  if (!isOpen) return null
 
   return (
     <>
       {/* Backdrop */}
       <div
         className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
-        onClick={onClose}
+        onMouseDown={handleBackdropMouseDown}
+        onClick={handleBackdropClick}
       />
 
       {/* Popup */}
@@ -75,5 +94,5 @@ export const LayersPopup = ({ isOpen, onClose }: LayersPopupProps) => {
         </div>
       </div>
     </>
-  );
-};
+  )
+}
