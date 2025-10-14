@@ -189,62 +189,6 @@ export default function Home() {
                 </p>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 text-xs sm:text-sm text-slate-400 mt-2">
                   <div className="flex items-center gap-1.5">
-                    <TreePine
-                      size={14}
-                      className="text-green-500 flex-shrink-0"
-                    />{" "}
-                    forest
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <CloudRain
-                      size={14}
-                      className="text-sky-400 flex-shrink-0"
-                    />{" "}
-                    rain
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <Waves
-                      size={14}
-                      className="text-blue-500 flex-shrink-0"
-                    />{" "}
-                    ocean
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <Coffee
-                      size={14}
-                      className="text-amber-500 flex-shrink-0"
-                    />{" "}
-                    cafe
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <Building2
-                      size={14}
-                      className="text-gray-400 flex-shrink-0"
-                    />{" "}
-                    city
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <Moon
-                      size={14}
-                      className="text-purple-400 flex-shrink-0"
-                    />{" "}
-                    night
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <Rocket
-                      size={14}
-                      className="text-pink-500 flex-shrink-0"
-                    />{" "}
-                    space
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <Flower2
-                      size={14}
-                      className="text-rose-400 flex-shrink-0"
-                    />{" "}
-                    meditation
-                  </div>
-                  <div className="flex items-center gap-1.5">
                     <Flame
                       size={14}
                       className="text-orange-500 flex-shrink-0"
@@ -257,6 +201,62 @@ export default function Home() {
                       className="text-yellow-400 flex-shrink-0"
                     />{" "}
                     storm
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Coffee
+                      size={14}
+                      className="text-amber-500 flex-shrink-0"
+                    />{" "}
+                    cafe
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Flower2
+                      size={14}
+                      className="text-rose-400 flex-shrink-0"
+                    />{" "}
+                    meditation
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Rocket
+                      size={14}
+                      className="text-pink-500 flex-shrink-0"
+                    />{" "}
+                    space
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Moon
+                      size={14}
+                      className="text-purple-400 flex-shrink-0"
+                    />{" "}
+                    night
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Waves
+                      size={14}
+                      className="text-blue-500 flex-shrink-0"
+                    />{" "}
+                    ocean
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <CloudRain
+                      size={14}
+                      className="text-sky-400 flex-shrink-0"
+                    />{" "}
+                    rain
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <TreePine
+                      size={14}
+                      className="text-green-500 flex-shrink-0"
+                    />{" "}
+                    forest
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Building2
+                      size={14}
+                      className="text-gray-400 flex-shrink-0"
+                    />{" "}
+                    city
                   </div>
                 </div>
                 <p className="text-xs sm:text-sm text-slate-500 mt-2">
