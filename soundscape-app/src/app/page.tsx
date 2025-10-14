@@ -180,83 +180,87 @@ export default function Home() {
                 <li>Press Play to start your ambient experience</li>
               </ol>
               <div className="mt-3 p-3 bg-emerald-950/30 rounded-xl border border-emerald-800/50">
-                <p className="text-xs sm:text-sm font-semibold text-emerald-300 mb-1 flex items-center gap-1.5">
+                <p className="text-xs sm:text-sm font-semibold text-emerald-300 mb-2 flex items-center gap-1.5">
                   <Palette
                     size={14}
                     className="sm:w-4 sm:h-4"
                   />{" "}
                   Available Templates:
                 </p>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 text-xs sm:text-sm text-slate-400 mt-2">
-                  <div className="flex items-center gap-1.5">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 text-xs sm:text-sm text-slate-400 py-3">
+                  <div className="flex flex-col items-center justify-center gap-1.5">
                     <Flame
-                      size={14}
+                      size={20}
                       className="text-orange-500 flex-shrink-0"
-                    />{" "}
-                    fire
+                    />
+                    <span>fire</span>
                   </div>
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex flex-col items-center justify-center gap-1.5">
                     <CloudLightning
-                      size={14}
+                      size={20}
                       className="text-yellow-400 flex-shrink-0"
-                    />{" "}
-                    storm
+                    />
+                    <span>storm</span>
                   </div>
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex flex-col items-center justify-center gap-1.5">
                     <Coffee
-                      size={14}
+                      size={20}
                       className="text-amber-500 flex-shrink-0"
-                    />{" "}
-                    cafe
+                    />
+                    <span>cafe</span>
                   </div>
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex flex-col items-center justify-center gap-1.5">
                     <Flower2
-                      size={14}
+                      size={20}
                       className="text-rose-400 flex-shrink-0"
-                    />{" "}
-                    meditation
+                    />
+                    <span>meditation</span>
                   </div>
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex flex-col items-center justify-center gap-1.5">
                     <Rocket
-                      size={14}
+                      size={20}
                       className="text-pink-500 flex-shrink-0"
-                    />{" "}
-                    space
+                    />
+                    <span>space</span>
                   </div>
-                  <div className="flex items-center gap-1.5">
+
+                  {/* Separator */}
+                  <div className="col-span-2 sm:col-span-3 md:col-span-5 border-t border-slate-700/30 my-1"></div>
+
+                  <div className="flex flex-col items-center justify-center gap-1.5">
                     <Moon
-                      size={14}
+                      size={20}
                       className="text-purple-400 flex-shrink-0"
-                    />{" "}
-                    night
+                    />
+                    <span>night</span>
                   </div>
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex flex-col items-center justify-center gap-1.5">
                     <Waves
-                      size={14}
+                      size={20}
                       className="text-blue-500 flex-shrink-0"
-                    />{" "}
-                    ocean
+                    />
+                    <span>ocean</span>
                   </div>
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex flex-col items-center justify-center gap-1.5">
                     <CloudRain
-                      size={14}
+                      size={20}
                       className="text-sky-400 flex-shrink-0"
-                    />{" "}
-                    rain
+                    />
+                    <span>rain</span>
                   </div>
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex flex-col items-center justify-center gap-1.5">
                     <TreePine
-                      size={14}
+                      size={20}
                       className="text-green-500 flex-shrink-0"
-                    />{" "}
-                    forest
+                    />
+                    <span>forest</span>
                   </div>
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex flex-col items-center justify-center gap-1.5">
                     <Building2
-                      size={14}
+                      size={20}
                       className="text-gray-400 flex-shrink-0"
-                    />{" "}
-                    city
+                    />
+                    <span>city</span>
                   </div>
                 </div>
                 <p className="text-xs sm:text-sm text-slate-500 mt-2">
