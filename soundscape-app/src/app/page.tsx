@@ -16,6 +16,7 @@ import {
   Volume2,
   VolumeX,
   Layers3,
+  Music,
 } from "lucide-react"
 
 export default function Home() {
@@ -40,9 +41,11 @@ export default function Home() {
         {/* Header */}
         <div className="text-center mb-8 sm:mb-12">
           <h1 className="text-3xl sm:text-4xl md:text-5xl mb-3 sm:mb-4 flex items-center justify-center gap-2 sm:gap-3">
-            <span className="text-3xl sm:text-4xl hidden sm:inline">
-              {useAI ? "✨" : "🎵"}
-            </span>
+            {useAI ? (
+              <Sparkles className="w-10 h-10 sm:w-12 sm:h-12 text-cyan-400 hidden sm:block flex-shrink-0" />
+            ) : (
+              <Music className="w-10 h-10 sm:w-12 sm:h-12 text-cyan-400 hidden sm:block flex-shrink-0" />
+            )}
             <span className="font-bold bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400 bg-clip-text text-transparent">
               Soundscape Creator
             </span>
