@@ -7,9 +7,13 @@ import { AILayerSpec, FreeSoundClip } from "@/types/soundscape"
 
 interface AIPromptInputProps {
   onModeChange?: (isTemplate: boolean) => void
+  setKeywordsRef?: React.MutableRefObject<((keywords: string) => void) | null>
 }
 
-export const AIPromptInput = ({ onModeChange }: AIPromptInputProps) => {
+export const AIPromptInput = ({
+  onModeChange,
+  setKeywordsRef,
+}: AIPromptInputProps) => {
   const [keywords, setKeywords] = useState("")
   const [isGenerating, setIsGenerating] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -29,6 +33,45 @@ export const AIPromptInput = ({ onModeChange }: AIPromptInputProps) => {
       onModeChange(useSimpleMode)
     }
   }, [useSimpleMode, onModeChange])
+
+  // Expose setKeywords function to parent via ref
+  useEffect(() => {
+    if (setKeywordsRef) {
+      setKeywordsRef.current = (newKeyword: string) => {
+        setKeywords((prev) => {
+          const trimmedPrev = prev.trim()
+
+          // Don't add if keyword already exists in the input
+          // Split by whitespace and filter out empty strings
+          const existingKeywords = trimmedPrev
+            .split(/\s+/)
+            .filter((k) => k.length > 0)
+          if (existingKeywords.includes(newKeyword)) {
+            return prev
+          }
+
+          // If empty, just add the keyword
+          if (!trimmedPrev) {
+            return newKeyword
+          }
+
+          // If ends with space, just add the keyword
+          if (prev.endsWith(" ")) {
+            return prev + newKeyword
+          }
+
+          // Otherwise add a space before the keyword
+          return prev + " " + newKeyword
+        })
+        inputRef.current?.focus()
+      }
+    }
+    return () => {
+      if (setKeywordsRef) {
+        setKeywordsRef.current = null
+      }
+    }
+  }, [setKeywordsRef])
 
   const fetchSoundForLayer = async (
     layerSpec: AILayerSpec,

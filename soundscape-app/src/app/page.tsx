@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react"
-import { SoundscapePlayer } from "@/components/SoundscapePlayer";
+import { useState, useRef } from "react"
+import { SoundscapePlayer } from "@/components/SoundscapePlayer"
 import { LayersPopup } from "@/components/LayersPopup"
 import { AIPromptInput } from "@/components/AIPromptInput"
 import { PromptInput } from "@/components/PromptInput"
@@ -37,6 +37,7 @@ export default function Home() {
   const [useAI, setUseAI] = useState(true)
   const [aiUseTemplate, setAiUseTemplate] = useState(false)
   const [showLayersPopup, setShowLayersPopup] = useState(false)
+  const setAIKeywordsRef = useRef<((keywords: string) => void) | null>(null)
   const isPlaying = useSoundscapeStore((state) => state.isPlaying)
   const togglePlayback = useSoundscapeStore((state) => state.togglePlayback)
   const reset = useSoundscapeStore((state) => state.reset)
@@ -48,6 +49,13 @@ export default function Home() {
 
   // Determine current mode for instructions
   const currentMode = !useAI ? "manual" : aiUseTemplate ? "template" : "ai"
+
+  // Handle template click
+  const handleTemplateClick = (template: string) => {
+    if (setAIKeywordsRef.current) {
+      setAIKeywordsRef.current(template)
+    }
+  }
 
   return (
     <main className="min-h-[calc(100vh+1px)] bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 pb-14">
@@ -117,7 +125,10 @@ export default function Home() {
         {/* Input Component */}
         <div className="mb-8">
           {useAI ? (
-            <AIPromptInput onModeChange={setAiUseTemplate} />
+            <AIPromptInput
+              onModeChange={setAiUseTemplate}
+              setKeywordsRef={setAIKeywordsRef}
+            />
           ) : (
             <PromptInput />
           )}
@@ -188,80 +199,110 @@ export default function Home() {
                   Available Templates:
                 </p>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 text-xs sm:text-sm text-slate-400 py-3">
-                  <div className="flex flex-col items-center justify-center gap-1.5">
+                  <button
+                    onClick={() => handleTemplateClick("fire")}
+                    className="flex flex-col items-center justify-center gap-1.5 cursor-pointer hover:text-slate-200 transition-colors"
+                  >
                     <Flame
                       size={20}
                       className="text-orange-500 flex-shrink-0"
                     />
                     <span>fire</span>
-                  </div>
-                  <div className="flex flex-col items-center justify-center gap-1.5">
+                  </button>
+                  <button
+                    onClick={() => handleTemplateClick("storm")}
+                    className="flex flex-col items-center justify-center gap-1.5 cursor-pointer hover:text-slate-200 transition-colors"
+                  >
                     <CloudLightning
                       size={20}
                       className="text-yellow-400 flex-shrink-0"
                     />
                     <span>storm</span>
-                  </div>
-                  <div className="flex flex-col items-center justify-center gap-1.5">
+                  </button>
+                  <button
+                    onClick={() => handleTemplateClick("cafe")}
+                    className="flex flex-col items-center justify-center gap-1.5 cursor-pointer hover:text-slate-200 transition-colors"
+                  >
                     <Coffee
                       size={20}
                       className="text-amber-500 flex-shrink-0"
                     />
                     <span>cafe</span>
-                  </div>
-                  <div className="flex flex-col items-center justify-center gap-1.5">
+                  </button>
+                  <button
+                    onClick={() => handleTemplateClick("meditation")}
+                    className="flex flex-col items-center justify-center gap-1.5 cursor-pointer hover:text-slate-200 transition-colors"
+                  >
                     <Flower2
                       size={20}
                       className="text-rose-400 flex-shrink-0"
                     />
                     <span>meditation</span>
-                  </div>
-                  <div className="flex flex-col items-center justify-center gap-1.5">
+                  </button>
+                  <button
+                    onClick={() => handleTemplateClick("space")}
+                    className="flex flex-col items-center justify-center gap-1.5 cursor-pointer hover:text-slate-200 transition-colors"
+                  >
                     <Rocket
                       size={20}
                       className="text-pink-500 flex-shrink-0"
                     />
                     <span>space</span>
-                  </div>
+                  </button>
 
                   {/* Separator */}
                   <div className="col-span-2 sm:col-span-3 md:col-span-5 border-t border-slate-700/30 my-1"></div>
 
-                  <div className="flex flex-col items-center justify-center gap-1.5">
+                  <button
+                    onClick={() => handleTemplateClick("night")}
+                    className="flex flex-col items-center justify-center gap-1.5 cursor-pointer hover:text-slate-200 transition-colors"
+                  >
                     <Moon
                       size={20}
                       className="text-purple-400 flex-shrink-0"
                     />
                     <span>night</span>
-                  </div>
-                  <div className="flex flex-col items-center justify-center gap-1.5">
+                  </button>
+                  <button
+                    onClick={() => handleTemplateClick("ocean")}
+                    className="flex flex-col items-center justify-center gap-1.5 cursor-pointer hover:text-slate-200 transition-colors"
+                  >
                     <Waves
                       size={20}
                       className="text-blue-500 flex-shrink-0"
                     />
                     <span>ocean</span>
-                  </div>
-                  <div className="flex flex-col items-center justify-center gap-1.5">
+                  </button>
+                  <button
+                    onClick={() => handleTemplateClick("rain")}
+                    className="flex flex-col items-center justify-center gap-1.5 cursor-pointer hover:text-slate-200 transition-colors"
+                  >
                     <CloudRain
                       size={20}
                       className="text-sky-400 flex-shrink-0"
                     />
                     <span>rain</span>
-                  </div>
-                  <div className="flex flex-col items-center justify-center gap-1.5">
+                  </button>
+                  <button
+                    onClick={() => handleTemplateClick("forest")}
+                    className="flex flex-col items-center justify-center gap-1.5 cursor-pointer hover:text-slate-200 transition-colors"
+                  >
                     <TreePine
                       size={20}
                       className="text-green-500 flex-shrink-0"
                     />
                     <span>forest</span>
-                  </div>
-                  <div className="flex flex-col items-center justify-center gap-1.5">
+                  </button>
+                  <button
+                    onClick={() => handleTemplateClick("city")}
+                    className="flex flex-col items-center justify-center gap-1.5 cursor-pointer hover:text-slate-200 transition-colors"
+                  >
                     <Building2
                       size={20}
                       className="text-gray-400 flex-shrink-0"
                     />
                     <span>city</span>
-                  </div>
+                  </button>
                 </div>
                 <p className="text-xs sm:text-sm text-slate-500 mt-2">
                   Mix keywords like "rainy forest" or "peaceful ocean"
