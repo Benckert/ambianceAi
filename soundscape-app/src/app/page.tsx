@@ -7,6 +7,7 @@ import { AIPromptInput } from "@/components/AIPromptInput"
 import { PromptInput } from "@/components/PromptInput"
 import { Slider } from "@/components/ui/slider"
 import { useSoundscapeStore } from "@/hooks/useSoundscapeStore"
+import { TemplateIconButton } from "@/components/TemplateIconButton"
 import {
   Play,
   Pause,
@@ -199,110 +200,66 @@ export default function Home() {
                   Available Templates:
                 </p>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 text-xs sm:text-sm text-slate-400 py-3">
-                  <button
+                  <TemplateIconButton
+                    icon={Flame}
+                    iconColor="text-orange-500"
+                    label="fire"
                     onClick={() => handleTemplateClick("fire")}
-                    className="flex flex-col items-center justify-center gap-1.5 cursor-pointer hover:text-slate-200 transition-colors"
-                  >
-                    <Flame
-                      size={20}
-                      className="text-orange-500 flex-shrink-0"
-                    />
-                    <span>fire</span>
-                  </button>
-                  <button
+                  />
+                  <TemplateIconButton
+                    icon={CloudLightning}
+                    iconColor="text-yellow-400"
+                    label="storm"
                     onClick={() => handleTemplateClick("storm")}
-                    className="flex flex-col items-center justify-center gap-1.5 cursor-pointer hover:text-slate-200 transition-colors"
-                  >
-                    <CloudLightning
-                      size={20}
-                      className="text-yellow-400 flex-shrink-0"
-                    />
-                    <span>storm</span>
-                  </button>
-                  <button
+                  />
+                  <TemplateIconButton
+                    icon={Coffee}
+                    iconColor="text-amber-500"
+                    label="cafe"
                     onClick={() => handleTemplateClick("cafe")}
-                    className="flex flex-col items-center justify-center gap-1.5 cursor-pointer hover:text-slate-200 transition-colors"
-                  >
-                    <Coffee
-                      size={20}
-                      className="text-amber-500 flex-shrink-0"
-                    />
-                    <span>cafe</span>
-                  </button>
-                  <button
+                  />
+                  <TemplateIconButton
+                    icon={Flower2}
+                    iconColor="text-rose-400"
+                    label="meditation"
                     onClick={() => handleTemplateClick("meditation")}
-                    className="flex flex-col items-center justify-center gap-1.5 cursor-pointer hover:text-slate-200 transition-colors"
-                  >
-                    <Flower2
-                      size={20}
-                      className="text-rose-400 flex-shrink-0"
-                    />
-                    <span>meditation</span>
-                  </button>
-                  <button
+                  />
+                  <TemplateIconButton
+                    icon={Rocket}
+                    iconColor="text-pink-500"
+                    label="space"
                     onClick={() => handleTemplateClick("space")}
-                    className="flex flex-col items-center justify-center gap-1.5 cursor-pointer hover:text-slate-200 transition-colors"
-                  >
-                    <Rocket
-                      size={20}
-                      className="text-pink-500 flex-shrink-0"
-                    />
-                    <span>space</span>
-                  </button>
-
-                  {/* Separator */}
-                  <div className="col-span-2 sm:col-span-3 md:col-span-5 border-t border-slate-700/30 my-1"></div>
-
-                  <button
+                  />
+                  <TemplateIconButton
+                    icon={Moon}
+                    iconColor="text-purple-400"
+                    label="night"
                     onClick={() => handleTemplateClick("night")}
-                    className="flex flex-col items-center justify-center gap-1.5 cursor-pointer hover:text-slate-200 transition-colors"
-                  >
-                    <Moon
-                      size={20}
-                      className="text-purple-400 flex-shrink-0"
-                    />
-                    <span>night</span>
-                  </button>
-                  <button
+                  />
+                  <TemplateIconButton
+                    icon={Waves}
+                    iconColor="text-blue-500"
+                    label="ocean"
                     onClick={() => handleTemplateClick("ocean")}
-                    className="flex flex-col items-center justify-center gap-1.5 cursor-pointer hover:text-slate-200 transition-colors"
-                  >
-                    <Waves
-                      size={20}
-                      className="text-blue-500 flex-shrink-0"
-                    />
-                    <span>ocean</span>
-                  </button>
-                  <button
+                  />
+                  <TemplateIconButton
+                    icon={CloudRain}
+                    iconColor="text-sky-400"
+                    label="rain"
                     onClick={() => handleTemplateClick("rain")}
-                    className="flex flex-col items-center justify-center gap-1.5 cursor-pointer hover:text-slate-200 transition-colors"
-                  >
-                    <CloudRain
-                      size={20}
-                      className="text-sky-400 flex-shrink-0"
-                    />
-                    <span>rain</span>
-                  </button>
-                  <button
+                  />
+                  <TemplateIconButton
+                    icon={TreePine}
+                    iconColor="text-green-500"
+                    label="forest"
                     onClick={() => handleTemplateClick("forest")}
-                    className="flex flex-col items-center justify-center gap-1.5 cursor-pointer hover:text-slate-200 transition-colors"
-                  >
-                    <TreePine
-                      size={20}
-                      className="text-green-500 flex-shrink-0"
-                    />
-                    <span>forest</span>
-                  </button>
-                  <button
+                  />
+                  <TemplateIconButton
+                    icon={Building2}
+                    iconColor="text-gray-400"
+                    label="city"
                     onClick={() => handleTemplateClick("city")}
-                    className="flex flex-col items-center justify-center gap-1.5 cursor-pointer hover:text-slate-200 transition-colors"
-                  >
-                    <Building2
-                      size={20}
-                      className="text-gray-400 flex-shrink-0"
-                    />
-                    <span>city</span>
-                  </button>
+                  />
                 </div>
                 <p className="text-xs sm:text-sm text-slate-500 mt-2">
                   Mix keywords like "rainy forest" or "peaceful ocean"
