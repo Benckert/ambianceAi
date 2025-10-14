@@ -31,6 +31,13 @@ export const LayersPopup = ({ isOpen, onClose }: LayersPopupProps) => {
     }
   }, [isOpen, onClose])
 
+  // Close when all layers are removed
+  useEffect(() => {
+    if (isOpen && layers.length === 0) {
+      onClose()
+    }
+  }, [layers.length, isOpen, onClose])
+
   const handleBackdropMouseDown = (e: React.MouseEvent) => {
     // Track where the mouse down happened
     mouseDownTargetRef.current = e.target
