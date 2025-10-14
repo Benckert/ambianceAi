@@ -30,14 +30,16 @@ export const LayerControl = ({ layer }: LayerControlProps) => {
   const removeLayer = useSoundscapeStore((state) => state.removeLayer)
 
   const handleVolumeChange = (value: number[]) => {
-    setLayerVolume(layer.id, value[0] / 100)
+    const newVolume = value[0] / 100
+    setLayerVolume(layer.id, newVolume)
   }
 
   const handleToggleMute = () => {
     toggleLayerMute(layer.id)
   }
 
-  const isMuted = layer.isMuted || false
+  const isMuted = layer.isMuted || layer.volume === 0
+  const displayVolume = isMuted ? 0 : layer.volume * 100
   const displayName = truncateFilename(layer.name || "Unnamed Layer", 40)
 
   return (
@@ -80,14 +82,14 @@ export const LayerControl = ({ layer }: LayerControlProps) => {
             )}
           </button>
           <Slider
-            value={[layer.volume * 100]}
+            value={[displayVolume]}
             onValueChange={handleVolumeChange}
             max={100}
             step={1}
             className="flex-1"
           />
           <span className="text-xs text-gray-400 w-12 sm:w-14 text-right flex-shrink-0">
-            {Math.round(layer.volume * 100)}%
+            {Math.round(displayVolume)}%
           </span>
         </div>
       </div>

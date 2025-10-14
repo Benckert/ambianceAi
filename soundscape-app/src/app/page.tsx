@@ -14,6 +14,7 @@ import {
   Sparkles,
   Search,
   Volume2,
+  VolumeX,
   Layers3,
 } from "lucide-react"
 
@@ -26,13 +27,15 @@ export default function Home() {
   const reset = useSoundscapeStore((state) => state.reset)
   const layers = useSoundscapeStore((state) => state.layers)
   const masterVolume = useSoundscapeStore((state) => state.masterVolume)
+  const masterIsMuted = useSoundscapeStore((state) => state.masterIsMuted)
   const setMasterVolume = useSoundscapeStore((state) => state.setMasterVolume)
+  const toggleMasterMute = useSoundscapeStore((state) => state.toggleMasterMute)
 
   // Determine current mode for instructions
   const currentMode = !useAI ? "manual" : aiUseTemplate ? "template" : "ai"
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 pb-24">
+    <main className="min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 pb-14">
       <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8 max-w-4xl">
         {/* Header */}
         <div className="text-center mb-8 sm:mb-12">
@@ -229,7 +232,7 @@ export default function Home() {
         </div>
 
         {/* Footer */}
-        <div className="text-center mt-6 sm:mt-12 mb-8 sm:mb-6 text-slate-500 text-xs sm:text-sm px-4">
+        <div className="text-center mt-6 sm:mt-12 mb-6 text-slate-500 text-xs sm:text-sm px-4">
           <p>
             Powered by{" "}
             <a
@@ -245,8 +248,8 @@ export default function Home() {
       </div>
 
       {/* Spotify-Style Bottom Control Bar */}
-      <div className="fixed bottom-0 left-0 right-0 bg-slate-900/95 backdrop-blur-xl border-t border-slate-700/50 shadow-2xl z-50">
-        <div className="container mx-auto px-4 py-3 max-w-7xl">
+      <div className="fixed bottom-0 left-0 right-0 bg-slate-900/95 backdrop-blur-xl border-t border-slate-700/50 shadow-2xl z-50 pb-safe">
+        <div className="container mx-auto px-4 py-3 pb-6 md:pb-3 max-w-7xl">
           <div className="flex items-center justify-center gap-4">
             {/* Play/Pause Button */}
             <button
@@ -280,26 +283,39 @@ export default function Home() {
 
             {/* Master Volume Control */}
             <div className="flex-1 flex items-center gap-3 max-w-xs">
-              <Volume2
-                size={18}
-                className="text-slate-400 flex-shrink-0"
-              />
+              <button
+                onClick={toggleMasterMute}
+                disabled={layers.length === 0}
+                className="text-slate-400 hover:text-white transition-colors cursor-pointer flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                aria-label={
+                  masterIsMuted ? "Unmute master volume" : "Mute master volume"
+                }
+              >
+                {masterIsMuted ? (
+                  <VolumeX
+                    size={18}
+                    className="text-red-400"
+                  />
+                ) : (
+                  <Volume2 size={18} />
+                )}
+              </button>
               <Slider
-                value={[masterVolume * 100]}
+                value={[masterIsMuted ? 0 : masterVolume * 100]}
                 onValueChange={(value) => setMasterVolume(value[0] / 100)}
                 max={100}
                 step={1}
                 disabled={layers.length === 0}
                 className="flex-1"
               />
-              <span className="text-xs text-slate-400 w-10 text-right">
-                {Math.round(masterVolume * 100)}%
+              <span className="hidden sm:inline text-xs text-slate-400 w-10 text-right">
+                {Math.round(masterIsMuted ? 0 : masterVolume * 100)}%
               </span>
             </div>
 
             {/* Layers Pill Button */}
             <button
-              onClick={() => setShowLayersPopup(true)}
+              onClick={() => setShowLayersPopup(!showLayersPopup)}
               disabled={layers.length === 0}
               className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-full border border-slate-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
