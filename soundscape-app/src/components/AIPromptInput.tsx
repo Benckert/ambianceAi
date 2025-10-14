@@ -244,12 +244,14 @@ export const AIPromptInput = ({ onModeChange }: AIPromptInputProps) => {
             <button
               type="button"
               onClick={() => setUseSimpleMode(!useSimpleMode)}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer flex-shrink-0 ${
-                useSimpleMode ? "bg-emerald-500" : "bg-indigo-500"
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-all cursor-pointer flex-shrink-0 ${
+                useSimpleMode
+                  ? "bg-gradient-to-r from-emerald-500 to-teal-500"
+                  : "bg-gradient-to-r from-indigo-500 to-purple-500"
               }`}
             >
               <span
-                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform shadow-md ${
                   useSimpleMode ? "translate-x-1" : "translate-x-6"
                 }`}
               />
