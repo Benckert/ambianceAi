@@ -50,18 +50,18 @@ export const AIPromptInput = ({
             return prev
           }
 
-          // If empty, just add the keyword
+          // If empty, add the keyword with trailing space
           if (!trimmedPrev) {
-            return newKeyword
+            return newKeyword + ' '
           }
 
-          // If ends with space, just add the keyword
+          // If ends with space, add keyword with trailing space
           if (prev.endsWith(" ")) {
-            return prev + newKeyword
+            return prev + newKeyword + ' '
           }
 
-          // Otherwise add a space before the keyword
-          return prev + " " + newKeyword
+          // Otherwise add a space before the keyword and trailing space after
+          return prev + " " + newKeyword + ' '
         })
         inputRef.current?.focus()
       }
