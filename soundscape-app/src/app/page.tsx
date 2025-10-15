@@ -32,11 +32,14 @@ import {
   Flower2,
   Flame,
   CloudLightning,
+  Loader2,
 } from "lucide-react"
 
 export default function Home() {
   const [useAI, setUseAI] = useState(true)
   const [showLayersPopup, setShowLayersPopup] = useState(false)
+  const [showSearchTips, setShowSearchTips] = useState(false)
+  const [generatingTemplate, setGeneratingTemplate] = useState<string | null>(null)
   const isPlaying = useSoundscapeStore((state) => state.isPlaying)
   const togglePlayback = useSoundscapeStore((state) => state.togglePlayback)
   const reset = useSoundscapeStore((state) => state.reset)
@@ -52,6 +55,7 @@ export default function Home() {
 
   // Handle template click - Now generates soundscape directly
   const handleTemplateClick = async (template: string) => {
+    setGeneratingTemplate(template)
     try {
       // Call the simple soundscape generation API
       const response = await fetch("/api/generate-soundscape-simple", {
@@ -104,6 +108,8 @@ export default function Home() {
       }
     } catch (error) {
       console.error("Template generation error:", error)
+    } finally {
+      setGeneratingTemplate(null)
     }
   }
 
@@ -217,12 +223,137 @@ export default function Home() {
         </div>
 
         {/* Input Component */}
-        <div className="mb-8">
+        <div className={useAI ? "mb-8" : ""}>
           {useAI ? <AIPromptInput /> : <PromptInput />}
         </div>
 
+        {/* Search Tips - Only shown in Manual mode */}
+        {currentMode === "manual" && (
+          <div className="mb-8 mt-4">
+            <button
+              type="button"
+              onClick={() => setShowSearchTips(!showSearchTips)}
+              className="w-full p-3 bg-cyan-950/30 border border-cyan-800/40 rounded-xl backdrop-blur-sm hover:bg-cyan-950/40 transition-colors cursor-pointer"
+            >
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <Lightbulb
+                    size={14}
+                    className="text-cyan-400 sm:w-4 sm:h-4 flex-shrink-0"
+                  />
+                  <span className="text-xs sm:text-sm text-cyan-300 font-medium">
+                    Search Tips
+                  </span>
+                </div>
+                <span className="text-cyan-400 text-xs">
+                  {showSearchTips ? "▼" : "▶"}
+                </span>
+              </div>
+            </button>
+            {showSearchTips && (
+              <div className="mt-2 p-3 bg-cyan-950/20 border border-cyan-800/30 rounded-xl backdrop-blur-sm">
+                <ul className="text-xs sm:text-sm text-cyan-400/70 space-y-0.5 list-disc list-inside">
+                  <li>Try: "ocean waves", "forest birds", "rain thunder"</li>
+                  <li>Sounds tagged with "loop" are shown first</li>
+                  <li>Mix different sound durations for best results</li>
+                </ul>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Instructions */}
         <div className="bg-slate-800/40 backdrop-blur-md border border-slate-700/50 rounded-2xl p-4 sm:p-6">
+          {currentMode === "manual" && (
+            <>
+              {/* Quick Template Buttons - Above instructions */}
+              <div className="mb-6 p-3 bg-cyan-950/40 rounded-xl border border-cyan-600/50">
+                <p className="text-xs sm:text-sm font-semibold text-cyan-300 mb-1 flex items-center gap-1.5">
+                  <Palette
+                    size={14}
+                    className="sm:w-4 sm:h-4"
+                  />{" "}
+                  Quick Templates:
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-x-3 gap-y-3 text-xs sm:text-sm text-slate-400 p-3">
+                  <TemplateIconButton
+                    icon={Flame}
+                    iconColor="text-orange-500"
+                    label="fire"
+                    onClick={() => handleTemplateClick("fire")}
+                    isLoading={generatingTemplate === "fire"}
+                  />
+                  <TemplateIconButton
+                    icon={CloudLightning}
+                    iconColor="text-yellow-400"
+                    label="storm"
+                    onClick={() => handleTemplateClick("storm")}
+                    isLoading={generatingTemplate === "storm"}
+                  />
+                  <TemplateIconButton
+                    icon={Coffee}
+                    iconColor="text-amber-500"
+                    label="cafe"
+                    onClick={() => handleTemplateClick("cafe")}
+                    isLoading={generatingTemplate === "cafe"}
+                  />
+                  <TemplateIconButton
+                    icon={Flower2}
+                    iconColor="text-rose-400"
+                    label="meditation"
+                    onClick={() => handleTemplateClick("meditation")}
+                    isLoading={generatingTemplate === "meditation"}
+                  />
+                  <TemplateIconButton
+                    icon={Rocket}
+                    iconColor="text-pink-500"
+                    label="space"
+                    onClick={() => handleTemplateClick("space")}
+                    isLoading={generatingTemplate === "space"}
+                  />
+                  <TemplateIconButton
+                    icon={Moon}
+                    iconColor="text-purple-400"
+                    label="night"
+                    onClick={() => handleTemplateClick("night")}
+                    isLoading={generatingTemplate === "night"}
+                  />
+                  <TemplateIconButton
+                    icon={Waves}
+                    iconColor="text-blue-500"
+                    label="ocean"
+                    onClick={() => handleTemplateClick("ocean")}
+                    isLoading={generatingTemplate === "ocean"}
+                  />
+                  <TemplateIconButton
+                    icon={CloudRain}
+                    iconColor="text-sky-400"
+                    label="rain"
+                    onClick={() => handleTemplateClick("rain")}
+                    isLoading={generatingTemplate === "rain"}
+                  />
+                  <TemplateIconButton
+                    icon={TreePine}
+                    iconColor="text-green-500"
+                    label="forest"
+                    onClick={() => handleTemplateClick("forest")}
+                    isLoading={generatingTemplate === "forest"}
+                  />
+                  <TemplateIconButton
+                    icon={Building2}
+                    iconColor="text-gray-400"
+                    label="city"
+                    onClick={() => handleTemplateClick("city")}
+                    isLoading={generatingTemplate === "city"}
+                  />
+                </div>
+                <p className="text-xs sm:text-sm text-slate-500">
+                  Click any template to instantly generate a soundscape
+                </p>
+              </div>
+            </>
+          )}
+
           <h3
             className={`text-base sm:text-lg font-semibold mb-3 ${
               currentMode === "manual" ? "text-cyan-300" : "text-violet-400"
@@ -239,100 +370,10 @@ export default function Home() {
                   "wind")
                 </li>
                 <li>Click "Add Layer" on sounds you like</li>
-                <li>Or click a Quick Template below for instant soundscapes</li>
+                <li>Or click a Quick Template above for instant soundscapes</li>
                 <li>Adjust volume sliders to balance your mix</li>
                 <li>Press Play to start your soundscape</li>
               </ol>
-              <div className="mt-3 p-3 bg-slate-900/50 rounded-xl border border-slate-700/50">
-                <p className="text-xs sm:text-sm font-semibold text-cyan-300 mb-1 flex items-center gap-1.5">
-                  <Lightbulb
-                    size={14}
-                    className="sm:w-4 sm:h-4"
-                  />{" "}
-                  Search Tips:
-                </p>
-                <ul className="text-xs sm:text-sm text-slate-400 space-y-1">
-                  <li>• Try: "ocean waves", "forest birds", "rain thunder"</li>
-                  <li>• Sounds tagged with "loop" are shown first</li>
-                  <li>• Mix different sound durations for best results</li>
-                </ul>
-              </div>
-
-              {/* Quick Template Buttons */}
-              <div className="mt-3 p-3 bg-cyan-950/40 rounded-xl border border-cyan-600/50">
-                <p className="text-xs sm:text-sm font-semibold text-cyan-300 mb-1 flex items-center gap-1.5">
-                  <Palette
-                    size={14}
-                    className="sm:w-4 sm:h-4"
-                  />{" "}
-                  Quick Templates:
-                </p>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-x-3 gap-y-3 text-xs sm:text-sm text-slate-400 p-3">
-                  <TemplateIconButton
-                    icon={Flame}
-                    iconColor="text-orange-500"
-                    label="fire"
-                    onClick={() => handleTemplateClick("fire")}
-                  />
-                  <TemplateIconButton
-                    icon={CloudLightning}
-                    iconColor="text-yellow-400"
-                    label="storm"
-                    onClick={() => handleTemplateClick("storm")}
-                  />
-                  <TemplateIconButton
-                    icon={Coffee}
-                    iconColor="text-amber-500"
-                    label="cafe"
-                    onClick={() => handleTemplateClick("cafe")}
-                  />
-                  <TemplateIconButton
-                    icon={Flower2}
-                    iconColor="text-rose-400"
-                    label="meditation"
-                    onClick={() => handleTemplateClick("meditation")}
-                  />
-                  <TemplateIconButton
-                    icon={Rocket}
-                    iconColor="text-pink-500"
-                    label="space"
-                    onClick={() => handleTemplateClick("space")}
-                  />
-                  <TemplateIconButton
-                    icon={Moon}
-                    iconColor="text-purple-400"
-                    label="night"
-                    onClick={() => handleTemplateClick("night")}
-                  />
-                  <TemplateIconButton
-                    icon={Waves}
-                    iconColor="text-blue-500"
-                    label="ocean"
-                    onClick={() => handleTemplateClick("ocean")}
-                  />
-                  <TemplateIconButton
-                    icon={CloudRain}
-                    iconColor="text-sky-400"
-                    label="rain"
-                    onClick={() => handleTemplateClick("rain")}
-                  />
-                  <TemplateIconButton
-                    icon={TreePine}
-                    iconColor="text-green-500"
-                    label="forest"
-                    onClick={() => handleTemplateClick("forest")}
-                  />
-                  <TemplateIconButton
-                    icon={Building2}
-                    iconColor="text-gray-400"
-                    label="city"
-                    onClick={() => handleTemplateClick("city")}
-                  />
-                </div>
-                <p className="text-xs sm:text-sm text-slate-500">
-                  Click any template to instantly generate a soundscape
-                </p>
-              </div>
             </>
           )}
 
