@@ -6,6 +6,7 @@ interface TemplateIconButtonProps {
   label: string
   onClick: () => void
   isLoading?: boolean
+  isClicked?: boolean
 }
 
 export function TemplateIconButton({
@@ -14,12 +15,17 @@ export function TemplateIconButton({
   label,
   onClick,
   isLoading = false,
+  isClicked = false,
 }: TemplateIconButtonProps) {
   return (
     <button
       onClick={onClick}
       disabled={isLoading}
-      className="flex flex-col items-center justify-center gap-1.5 cursor-pointer hover:text-slate-200 hover:scale-110 hover:border-slate-500/50 transition-all duration-150 ease-out border border-transparent rounded-lg p-2 m-1 will-change-transform disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+      className={`flex flex-col items-center justify-center gap-1.5 cursor-pointer transition-all duration-150 ease-out border rounded-lg p-2 m-1 will-change-transform disabled:opacity-50 disabled:cursor-not-allowed ${
+        isClicked
+          ? "text-slate-200 scale-110 border-cyan-500/50 bg-cyan-950/30"
+          : "hover:text-slate-200 hover:scale-110 hover:border-slate-500/50 border-transparent"
+      }`}
     >
       {isLoading ? (
         <Loader2

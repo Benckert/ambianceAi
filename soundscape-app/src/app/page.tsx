@@ -40,6 +40,7 @@ export default function Home() {
   const [showLayersPopup, setShowLayersPopup] = useState(false)
   const [showSearchTips, setShowSearchTips] = useState(false)
   const [generatingTemplates, setGeneratingTemplates] = useState<string[]>([])
+  const [clickedTemplates, setClickedTemplates] = useState<string[]>([])
   const isPlaying = useSoundscapeStore((state) => state.isPlaying)
   const togglePlayback = useSoundscapeStore((state) => state.togglePlayback)
   const reset = useSoundscapeStore((state) => state.reset)
@@ -55,6 +56,14 @@ export default function Home() {
 
   // Handle template click - Now generates soundscape directly
   const handleTemplateClick = async (template: string) => {
+    // Mark template as clicked immediately
+    setClickedTemplates((prev) => {
+      if (!prev.includes(template)) {
+        return [...prev, template]
+      }
+      return prev
+    })
+
     // Add this template to the generating list
     setGeneratingTemplates((prev) => [...prev, template])
 
@@ -282,6 +291,7 @@ export default function Home() {
                     label="fire"
                     onClick={() => handleTemplateClick("fire")}
                     isLoading={generatingTemplates.includes("fire")}
+                    isClicked={clickedTemplates.includes("fire")}
                   />
                   <TemplateIconButton
                     icon={CloudLightning}
@@ -289,6 +299,7 @@ export default function Home() {
                     label="storm"
                     onClick={() => handleTemplateClick("storm")}
                     isLoading={generatingTemplates.includes("storm")}
+                    isClicked={clickedTemplates.includes("storm")}
                   />
                   <TemplateIconButton
                     icon={Coffee}
@@ -296,6 +307,7 @@ export default function Home() {
                     label="cafe"
                     onClick={() => handleTemplateClick("cafe")}
                     isLoading={generatingTemplates.includes("cafe")}
+                    isClicked={clickedTemplates.includes("cafe")}
                   />
                   <TemplateIconButton
                     icon={Flower2}
@@ -303,6 +315,7 @@ export default function Home() {
                     label="meditation"
                     onClick={() => handleTemplateClick("meditation")}
                     isLoading={generatingTemplates.includes("meditation")}
+                    isClicked={clickedTemplates.includes("meditation")}
                   />
                   <TemplateIconButton
                     icon={Rocket}
@@ -310,6 +323,7 @@ export default function Home() {
                     label="space"
                     onClick={() => handleTemplateClick("space")}
                     isLoading={generatingTemplates.includes("space")}
+                    isClicked={clickedTemplates.includes("space")}
                   />
                   <TemplateIconButton
                     icon={Moon}
@@ -317,6 +331,7 @@ export default function Home() {
                     label="night"
                     onClick={() => handleTemplateClick("night")}
                     isLoading={generatingTemplates.includes("night")}
+                    isClicked={clickedTemplates.includes("night")}
                   />
                   <TemplateIconButton
                     icon={Waves}
@@ -324,6 +339,7 @@ export default function Home() {
                     label="ocean"
                     onClick={() => handleTemplateClick("ocean")}
                     isLoading={generatingTemplates.includes("ocean")}
+                    isClicked={clickedTemplates.includes("ocean")}
                   />
                   <TemplateIconButton
                     icon={CloudRain}
@@ -331,6 +347,7 @@ export default function Home() {
                     label="rain"
                     onClick={() => handleTemplateClick("rain")}
                     isLoading={generatingTemplates.includes("rain")}
+                    isClicked={clickedTemplates.includes("rain")}
                   />
                   <TemplateIconButton
                     icon={TreePine}
@@ -338,6 +355,7 @@ export default function Home() {
                     label="forest"
                     onClick={() => handleTemplateClick("forest")}
                     isLoading={generatingTemplates.includes("forest")}
+                    isClicked={clickedTemplates.includes("forest")}
                   />
                   <TemplateIconButton
                     icon={Building2}
@@ -345,6 +363,7 @@ export default function Home() {
                     label="city"
                     onClick={() => handleTemplateClick("city")}
                     isLoading={generatingTemplates.includes("city")}
+                    isClicked={clickedTemplates.includes("city")}
                   />
                 </div>
                 <p className="text-xs sm:text-sm text-slate-500">
@@ -468,7 +487,10 @@ export default function Home() {
 
             {/* Reset Button */}
             <button
-              onClick={reset}
+              onClick={() => {
+                reset()
+                setClickedTemplates([])
+              }}
               disabled={layers.length === 0}
               className="w-8 h-8 flex-shrink-0 text-slate-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               title="Clear all"
