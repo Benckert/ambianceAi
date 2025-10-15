@@ -11,6 +11,7 @@ export const useSoundscapeStore = create<SoundscapeState>((set) => ({
   addLayer: (layer: Layer) =>
     set((state) => ({
       layers: [...state.layers, layer],
+      isPlaying: true,
     })),
 
   setLayerVolume: (id: string, volume: number) =>
