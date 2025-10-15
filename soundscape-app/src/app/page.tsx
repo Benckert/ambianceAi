@@ -294,7 +294,7 @@ export default function Home() {
                   />{" "}
                   Quick Templates:
                 </p>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-x-3 gap-y-3 text-xs sm:text-sm text-slate-400 p-3">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-x-8 gap-y-6 text-xs sm:text-sm text-slate-400 p-3">
                   <TemplateIconButton
                     icon={Flame}
                     iconColor="text-orange-500"

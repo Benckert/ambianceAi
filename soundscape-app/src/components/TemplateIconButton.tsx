@@ -21,11 +21,13 @@ export function TemplateIconButton({
     <button
       onClick={onClick}
       disabled={isLoading}
-      className={`flex flex-col items-center justify-center gap-1.5 cursor-pointer transition-all duration-150 ease-out border rounded-lg p-2 m-1 will-change-transform disabled:opacity-50 disabled:cursor-not-allowed ${
-        isClicked
-          ? "text-slate-200 scale-110 border-cyan-500/50 bg-cyan-950/30"
-          : "hover:text-slate-200 hover:scale-110 hover:border-slate-500/50 border-transparent"
-      }`}
+      className={`flex flex-col items-center justify-center gap-1.5 cursor-pointer transition-all duration-150 ease-out rounded-lg p-2 will-change-transform disabled:opacity-50 disabled:cursor-wait
+        ${
+          isClicked
+            ? "text-slate-200 scale-110 border border-cyan-500/50 bg-gradient-to-br from-cyan-500/20 to-blue-500/20"
+            : "border border-transparent hover:text-slate-200 hover:scale-110 hover:border-cyan-500/30"
+        }
+      `}
     >
       {isLoading ? (
         <Loader2
