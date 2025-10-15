@@ -56,13 +56,14 @@ export default function Home() {
 
   // Handle template click - Now generates soundscape directly
   const handleTemplateClick = async (template: string) => {
+    // Check if template is already clicked - if so, toggle it off
+    if (clickedTemplates.includes(template)) {
+      setClickedTemplates((prev) => prev.filter((t) => t !== template))
+      return
+    }
+
     // Mark template as clicked immediately
-    setClickedTemplates((prev) => {
-      if (!prev.includes(template)) {
-        return [...prev, template]
-      }
-      return prev
-    })
+    setClickedTemplates((prev) => [...prev, template])
 
     // Add this template to the generating list
     setGeneratingTemplates((prev) => [...prev, template])
