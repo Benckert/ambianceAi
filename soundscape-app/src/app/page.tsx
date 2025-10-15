@@ -156,6 +156,7 @@ export default function Home() {
         e.preventDefault()
         if (layers.length > 0) {
           reset()
+          setClickedTemplates([])
         }
       }
     }
@@ -163,6 +164,24 @@ export default function Home() {
     window.addEventListener("keydown", handleKeyPress)
     return () => window.removeEventListener("keydown", handleKeyPress)
   }, [layers.length, togglePlayback, reset])
+
+  // Monitor layers and unclick templates if their layers are all removed
+  useEffect(() => {
+    // Check each clicked template to see if it still has layers
+    const templatesWithLayers = clickedTemplates.filter((template) => {
+      // Keep template if it's currently generating OR if it has layers
+      const isGenerating = generatingTemplates.includes(template)
+      const hasLayers = layers.some((layer) =>
+        layer.id.startsWith(`template-${template}-`)
+      )
+      return isGenerating || hasLayers
+    })
+
+    // If any templates no longer have layers, remove them from clicked state
+    if (templatesWithLayers.length !== clickedTemplates.length) {
+      setClickedTemplates(templatesWithLayers)
+    }
+  }, [layers, clickedTemplates, generatingTemplates])
 
   return (
     <main className="min-h-[calc(100vh+1px)] bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 pb-14">
