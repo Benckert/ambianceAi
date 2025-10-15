@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react"
 import { Sparkles, Loader2, Lightbulb } from "lucide-react"
+import { Music, Search, Bot } from "lucide-react"
 import { useSoundscapeStore } from "@/hooks/useSoundscapeStore"
 import { AILayerSpec, FreeSoundClip } from "@/types/soundscape"
 
@@ -13,7 +14,7 @@ export const AIPromptInput = ({ onClearTemplates }: AIPromptInputProps) => {
   const [keywords, setKeywords] = useState("")
   const [isGenerating, setIsGenerating] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [generationStatus, setGenerationStatus] = useState<string>("")
+  const [generationStatus, setGenerationStatus] = useState<React.ReactNode>("")
   const [showInfo, setShowInfo] = useState(false) // Info banner visibility
   const addLayer = useSoundscapeStore((state) => state.addLayer)
   const reset = useSoundscapeStore((state) => state.reset)
@@ -84,9 +85,25 @@ export const AIPromptInput = ({ onClearTemplates }: AIPromptInputProps) => {
     const shouldRandomize = isDuplicate
 
     if (shouldRandomize) {
-      setGenerationStatus("🎲 AI is creating a new variation...")
+      setGenerationStatus(
+        <span className="flex items-center gap-2">
+          <Sparkles
+            size={18}
+            className="text-indigo-400"
+          />
+          AI is creating a new variation...
+        </span>
+      )
     } else {
-      setGenerationStatus("🤖 AI is analyzing your keywords...")
+      setGenerationStatus(
+        <span className="flex items-center gap-2">
+          <Bot
+            size={18}
+            className="text-indigo-400"
+          />
+          AI is analyzing your keywords...
+        </span>
+      )
     }
 
     // Store this prompt for next time
@@ -131,11 +148,24 @@ export const AIPromptInput = ({ onClearTemplates }: AIPromptInputProps) => {
       // Show cache status
       if (cached) {
         setGenerationStatus(
-          `💾 Using cached result! Found ${soundscape.layers.length} layers. Fetching sounds...`
+          <span className="flex items-center gap-2">
+            <Loader2
+              size={18}
+              className="text-indigo-400 animate-spin"
+            />
+            Using cached result! Found {soundscape.layers.length} layers.
+            Fetching sounds...
+          </span>
         )
       } else {
         setGenerationStatus(
-          `🎵 Found ${soundscape.layers.length} layers. Fetching sounds...`
+          <span className="flex items-center gap-2">
+            <Music
+              size={18}
+              className="text-indigo-400"
+            />
+            Found {soundscape.layers.length} layers. Fetching sounds...
+          </span>
         )
       }
 
@@ -150,9 +180,14 @@ export const AIPromptInput = ({ onClearTemplates }: AIPromptInputProps) => {
       for (let i = 0; i < soundscape.layers.length; i++) {
         const layerSpec = soundscape.layers[i]
         setGenerationStatus(
-          `🔍 Fetching ${layerSpec.category} sound (${i + 1}/${
-            soundscape.layers.length
-          }): ${layerSpec.description}`
+          <span className="flex items-center gap-2">
+            <Search
+              size={16}
+              className="text-indigo-400"
+            />
+            Fetching {layerSpec.category} sound ({i + 1}/
+            {soundscape.layers.length}): {layerSpec.description}
+          </span>
         )
 
         // Fetch sound, automatically excluding already-used IDs
@@ -188,7 +223,14 @@ export const AIPromptInput = ({ onClearTemplates }: AIPromptInputProps) => {
         setError("Could not find any suitable sounds. Try different keywords.")
       } else {
         setGenerationStatus(
-          `✨ Soundscape complete! Added ${successCount}/${soundscape.layers.length} layers. ${soundscape.mixingNotes}`
+          <span className="flex items-center gap-2">
+            <Sparkles
+              size={18}
+              className="text-indigo-400"
+            />
+            Soundscape complete! Added {successCount}/{soundscape.layers.length}{" "}
+            layers. {soundscape.mixingNotes}
+          </span>
         )
 
         // Clear status after 5 seconds
