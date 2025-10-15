@@ -45,6 +45,7 @@ export default function Home() {
   const togglePlayback = useSoundscapeStore((state) => state.togglePlayback)
   const reset = useSoundscapeStore((state) => state.reset)
   const addLayer = useSoundscapeStore((state) => state.addLayer)
+  const removeLayer = useSoundscapeStore((state) => state.removeLayer)
   const layers = useSoundscapeStore((state) => state.layers)
   const masterVolume = useSoundscapeStore((state) => state.masterVolume)
   const masterIsMuted = useSoundscapeStore((state) => state.masterIsMuted)
@@ -56,9 +57,17 @@ export default function Home() {
 
   // Handle template click - Now generates soundscape directly
   const handleTemplateClick = async (template: string) => {
-    // Check if template is already clicked - if so, toggle it off
+    // Check if template is already clicked - if so, toggle it off and remove its layers
     if (clickedTemplates.includes(template)) {
       setClickedTemplates((prev) => prev.filter((t) => t !== template))
+
+      // Remove all layers that belong to this template
+      layers.forEach((layer) => {
+        if (layer.id.startsWith(`template-${template}-`)) {
+          removeLayer(layer.id)
+        }
+      })
+
       return
     }
 
@@ -99,7 +108,7 @@ export default function Home() {
               )
 
               addLayer({
-                id: `template-layer-${clip.id}-${Date.now()}`,
+                id: `template-${template}-${clip.id}-${Date.now()}`,
                 url: clip.previews["preview-hq-mp3"],
                 volume: layerSpec.volume || 0.5,
                 loop: hasLoopTag,
