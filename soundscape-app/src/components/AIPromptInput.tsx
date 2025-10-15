@@ -279,6 +279,56 @@ export const AIPromptInput = ({
 
   return (
     <div className="space-y-4">
+      {/* Rate Limit Info Banner - Removed from here */}
+
+      <form
+        onSubmit={handleGenerate}
+        className="flex flex-col sm:flex-row gap-2"
+      >
+        <div className="flex-1">
+          <input
+            ref={inputRef}
+            type="text"
+            value={keywords}
+            onChange={(e) => setKeywords(e.target.value)}
+            placeholder={
+              useSimpleMode
+                ? "Try: forest, rain, ocean, cafe..."
+                : "Describe your soundscape..."
+            }
+            className="w-full px-4 py-3 bg-slate-800/80 text-white rounded-xl border border-slate-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 placeholder:text-slate-500 backdrop-blur-sm text-sm sm:text-base"
+            disabled={isGenerating}
+          />
+        </div>
+        <button
+          type="submit"
+          disabled={isGenerating}
+          className={`px-4 sm:px-6 py-3 rounded-xl text-white font-medium transition-all flex items-center justify-center gap-2 shadow-lg cursor-pointer text-sm sm:text-base whitespace-nowrap ${
+            useSimpleMode
+              ? "bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 shadow-emerald-500/25"
+              : "bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 shadow-indigo-500/25"
+          } disabled:from-slate-700 disabled:to-slate-700 disabled:cursor-not-allowed disabled:shadow-none`}
+        >
+          {isGenerating ? (
+            <>
+              <Loader2
+                size={18}
+                className="animate-spin sm:w-5 sm:h-5"
+              />
+              <span className="hidden sm:inline">Generating...</span>
+            </>
+          ) : (
+            <>
+              <Sparkles
+                size={18}
+                className="sm:w-5 sm:h-5"
+              />
+              <span className="hidden sm:inline">Generate</span>
+            </>
+          )}
+        </button>
+      </form>
+
       {/* Mode Toggle */}
       <div className="p-3 bg-slate-800/60 backdrop-blur-sm rounded-xl border border-slate-700/50">
         <div className="flex items-center justify-between gap-3">
@@ -334,56 +384,6 @@ export const AIPromptInput = ({
           </p>
         </div>
       </div>
-
-      {/* Rate Limit Info Banner - Removed from here */}
-
-      <form
-        onSubmit={handleGenerate}
-        className="flex flex-col sm:flex-row gap-2"
-      >
-        <div className="flex-1">
-          <input
-            ref={inputRef}
-            type="text"
-            value={keywords}
-            onChange={(e) => setKeywords(e.target.value)}
-            placeholder={
-              useSimpleMode
-                ? "Try: forest, rain, ocean, cafe..."
-                : "Describe your soundscape..."
-            }
-            className="w-full px-4 py-3 bg-slate-800/80 text-white rounded-xl border border-slate-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 placeholder:text-slate-500 backdrop-blur-sm text-sm sm:text-base"
-            disabled={isGenerating}
-          />
-        </div>
-        <button
-          type="submit"
-          disabled={isGenerating}
-          className={`px-4 sm:px-6 py-3 rounded-xl text-white font-medium transition-all flex items-center justify-center gap-2 shadow-lg cursor-pointer text-sm sm:text-base whitespace-nowrap ${
-            useSimpleMode
-              ? "bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 shadow-emerald-500/25"
-              : "bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 shadow-indigo-500/25"
-          } disabled:from-slate-700 disabled:to-slate-700 disabled:cursor-not-allowed disabled:shadow-none`}
-        >
-          {isGenerating ? (
-            <>
-              <Loader2
-                size={18}
-                className="animate-spin sm:w-5 sm:h-5"
-              />
-              <span className="hidden sm:inline">Generating...</span>
-            </>
-          ) : (
-            <>
-              <Sparkles
-                size={18}
-                className="sm:w-5 sm:h-5"
-              />
-              <span className="hidden sm:inline">Generate</span>
-            </>
-          )}
-        </button>
-      </form>
 
       {/* Collapsible Info Banner - Below form */}
       {!useSimpleMode && (
