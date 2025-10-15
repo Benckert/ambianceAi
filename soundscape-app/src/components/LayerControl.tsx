@@ -7,6 +7,7 @@ import { Layer } from "@/types/soundscape"
 
 interface LayerControlProps {
   layer: Layer
+  variant?: "manual" | "ai"
 }
 
 // Utility function to truncate long filenames
@@ -24,7 +25,10 @@ const truncateFilename = (filename: string, maxLength: number = 40): string => {
   return filename.slice(0, maxLength - 3) + "..."
 }
 
-export const LayerControl = ({ layer }: LayerControlProps) => {
+export const LayerControl = ({
+  layer,
+  variant = "manual",
+}: LayerControlProps) => {
   const setLayerVolume = useSoundscapeStore((state) => state.setLayerVolume)
   const toggleLayerMute = useSoundscapeStore((state) => state.toggleLayerMute)
   const removeLayer = useSoundscapeStore((state) => state.removeLayer)
@@ -86,6 +90,7 @@ export const LayerControl = ({ layer }: LayerControlProps) => {
             onValueChange={handleVolumeChange}
             max={100}
             step={1}
+            variant={variant}
             className="flex-1"
           />
           <span className="text-xs text-gray-400 w-12 sm:w-14 text-right flex-shrink-0">
@@ -97,7 +102,11 @@ export const LayerControl = ({ layer }: LayerControlProps) => {
   )
 }
 
-export const LayersList = () => {
+export const LayersList = ({
+  variant = "manual",
+}: {
+  variant?: "manual" | "ai"
+}) => {
   const layers = useSoundscapeStore((state) => state.layers)
 
   if (layers.length === 0) {
@@ -114,6 +123,7 @@ export const LayersList = () => {
         <LayerControl
           key={layer.id}
           layer={layer}
+          variant={variant}
         />
       ))}
     </div>

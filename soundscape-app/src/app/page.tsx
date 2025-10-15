@@ -438,6 +438,7 @@ export default function Home() {
                 onValueChange={(value) => setMasterVolume(value[0] / 100)}
                 max={100}
                 step={1}
+                variant={useAI ? "ai" : "manual"}
                 className="flex-1"
               />
               <span className="hidden sm:inline text-xs text-slate-400 w-10 text-right">
@@ -467,6 +468,7 @@ export default function Home() {
       <LayersPopup
         isOpen={showLayersPopup}
         onClose={() => setShowLayersPopup(false)}
+        variant={useAI ? "ai" : "manual"}
       />
 
       {/* Audio Player Component (no UI) */}

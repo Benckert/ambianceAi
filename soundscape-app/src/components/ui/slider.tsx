@@ -5,14 +5,35 @@ import * as SliderPrimitive from "@radix-ui/react-slider"
 
 import { cn } from "@/lib/utils"
 
+interface SliderProps
+  extends React.ComponentProps<typeof SliderPrimitive.Root> {
+  variant?: "manual" | "ai"
+}
+
 function Slider({
   className,
   defaultValue,
   value,
   min = 0,
   max = 100,
+  variant = "manual",
   ...props
-}: React.ComponentProps<typeof SliderPrimitive.Root>) {
+}: SliderProps) {
+  const rangeGradient =
+    variant === "ai"
+      ? "bg-gradient-to-r from-indigo-500 to-purple-500"
+      : "bg-gradient-to-r from-cyan-500 to-blue-500"
+
+  const thumbGradient =
+    variant === "ai"
+      ? "bg-gradient-to-br from-indigo-400 to-purple-500"
+      : "bg-gradient-to-br from-cyan-400 to-blue-500"
+
+  const thumbShadow =
+    variant === "ai"
+      ? "shadow-indigo-500/30 hover:shadow-xl hover:shadow-indigo-500/50 focus-visible:shadow-xl focus-visible:shadow-indigo-500/50"
+      : "shadow-cyan-500/30 hover:shadow-xl hover:shadow-cyan-500/50 focus-visible:shadow-xl focus-visible:shadow-cyan-500/50"
+
   return (
     <SliderPrimitive.Root
       data-slot="slider"
@@ -37,13 +58,18 @@ function Slider({
         <SliderPrimitive.Range
           data-slot="slider-range"
           className={cn(
-            "absolute bg-gradient-to-r from-cyan-500 to-blue-500 data-[orientation=horizontal]:h-full data-[orientation=vertical]:w-full"
+            "absolute data-[orientation=horizontal]:h-full data-[orientation=vertical]:w-full",
+            rangeGradient
           )}
         />
       </SliderPrimitive.Track>
       <SliderPrimitive.Thumb
         data-slot="slider-thumb"
-        className="block size-5 shrink-0 rounded-full border-2 border-white bg-gradient-to-br from-cyan-400 to-blue-500 shadow-lg shadow-cyan-500/30 transition-all hover:scale-110 hover:shadow-xl hover:shadow-cyan-500/50 focus-visible:scale-110 focus-visible:shadow-xl focus-visible:shadow-cyan-500/50 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50 cursor-pointer active:cursor-grabbing"
+        className={cn(
+          "block size-5 shrink-0 rounded-full border-2 border-white shadow-lg transition-all hover:scale-110 focus-visible:scale-110 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50 cursor-pointer active:cursor-grabbing",
+          thumbGradient,
+          thumbShadow
+        )}
         style={{ touchAction: "none" }}
       />
     </SliderPrimitive.Root>

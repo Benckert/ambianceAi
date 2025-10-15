@@ -8,9 +8,14 @@ import { useEffect, useRef } from "react"
 interface LayersPopupProps {
   isOpen: boolean
   onClose: () => void
+  variant?: "manual" | "ai"
 }
 
-export const LayersPopup = ({ isOpen, onClose }: LayersPopupProps) => {
+export const LayersPopup = ({
+  isOpen,
+  onClose,
+  variant = "manual",
+}: LayersPopupProps) => {
   const layers = useSoundscapeStore((state) => state.layers)
   const mouseDownTargetRef = useRef<EventTarget | null>(null)
 
@@ -99,7 +104,7 @@ export const LayersPopup = ({ isOpen, onClose }: LayersPopupProps) => {
               </p>
             </div>
           ) : (
-            <LayersList />
+            <LayersList variant={variant} />
           )}
         </div>
       </div>
