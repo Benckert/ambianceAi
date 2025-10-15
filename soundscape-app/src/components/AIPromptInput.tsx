@@ -303,7 +303,7 @@ export const AIPromptInput = ({
         <button
           type="submit"
           disabled={isGenerating}
-          className={`px-4 sm:px-6 py-3 rounded-xl text-white font-medium transition-all flex items-center justify-center gap-2 shadow-lg cursor-pointer text-sm sm:text-base whitespace-nowrap ${
+          className={`px-4 sm:px-6 py-3 rounded-xl text-white font-medium transition-all flex items-center justify-center gap-2 shadow-lg cursor-pointer text-sm sm:text-base whitespace-nowrap w-[90px] sm:w-[140px] ${
             useSimpleMode
               ? "bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 shadow-emerald-500/25"
               : "bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 shadow-indigo-500/25"
@@ -351,7 +351,7 @@ export const AIPromptInput = ({
             </button>
             <span
               className={`text-xs sm:text-sm font-medium flex items-center gap-1.5 ${
-                useSimpleMode ? "text-teal-500" : "text-purple-500"
+                useSimpleMode ? "text-teal-400" : "text-violet-400"
               }`}
             >
               {useSimpleMode ? (
@@ -375,7 +375,7 @@ export const AIPromptInput = ({
           </div>
           <p
             className={`text-xs ${
-              useSimpleMode ? "text-teal-500" : "text-purple-500"
+              useSimpleMode ? "text-teal-400" : "text-violet-400"
             } hidden sm:block`}
           >
             {useSimpleMode

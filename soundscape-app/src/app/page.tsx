@@ -97,11 +97,25 @@ export default function Home() {
         <div className="text-center mb-8 sm:mb-12">
           <h1 className="text-3xl sm:text-4xl md:text-5xl mb-3 sm:mb-4 flex items-center justify-center gap-2 sm:gap-3">
             {useAI ? (
-              <Sparkles className="w-10 h-10 sm:w-12 sm:h-12 text-cyan-400 hidden sm:block flex-shrink-0" />
+              <Sparkles
+                className={`w-10 h-10 sm:w-12 sm:h-12 hidden sm:block flex-shrink-0 ${
+                  useAI ? "text-indigo-400" : "text-cyan-400"
+                }`}
+              />
             ) : (
-              <Music className="w-10 h-10 sm:w-12 sm:h-12 text-cyan-400 hidden sm:block flex-shrink-0" />
+              <Music
+                className={`w-10 h-10 sm:w-12 sm:h-12 hidden sm:block flex-shrink-0 ${
+                  useAI ? "text-indigo-400" : "text-cyan-400"
+                }`}
+              />
             )}
-            <span className="font-bold bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400 bg-clip-text text-transparent">
+            <span
+              className={`font-bold bg-clip-text text-transparent ${
+                useAI
+                  ? "bg-gradient-to-r from-indigo-400 to-purple-400"
+                  : "bg-gradient-to-r from-cyan-400 to-blue-400"
+              }`}
+            >
               Soundscape Creator
             </span>
           </h1>
@@ -174,8 +188,8 @@ export default function Home() {
               currentMode === "manual"
                 ? "text-cyan-300"
                 : currentMode === "template"
-                ? "text-emerald-300"
-                : "text-indigo-300"
+                ? "text-teal-400"
+                : "text-violet-400"
             }`}
           >
             How to use{" "}
@@ -223,8 +237,8 @@ export default function Home() {
                 <li>Adjust volumes and add/remove layers as needed</li>
                 <li>Press Play to start your ambient experience</li>
               </ol>
-              <div className="mt-3 p-3 bg-emerald-950/30 rounded-xl border border-emerald-800/50">
-                <p className="text-xs sm:text-sm font-semibold text-emerald-300 mb-1 flex items-center gap-1.5">
+              <div className="mt-3 p-3 bg-slate-700/20 rounded-xl border border-slate-600/30">
+                <p className="text-xs sm:text-sm font-semibold text-teal-400 mb-1 flex items-center gap-1.5">
                   <Palette
                     size={14}
                     className="sm:w-4 sm:h-4"
