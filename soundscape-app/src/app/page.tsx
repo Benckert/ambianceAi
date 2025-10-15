@@ -409,9 +409,9 @@ export default function Home() {
             >
               <Layers3
                 size={16}
-                className="text-cyan-400"
+                className="text-slate-300"
               />
-              <span className="text-sm font-medium text-white">
+              <span className="text-sm font-medium text-white min-w-[1.25rem] text-center">
                 {layers.length}
               </span>
             </button>
