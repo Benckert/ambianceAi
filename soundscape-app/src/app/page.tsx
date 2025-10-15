@@ -209,7 +209,7 @@ export default function Home() {
                   : "bg-gradient-to-r from-cyan-400 to-blue-400"
               }`}
             >
-              Soundscape Creator
+              AmbianceAi
             </span>
           </h1>
           <p className="text-slate-400 text-sm sm:text-base md:text-lg px-4">
