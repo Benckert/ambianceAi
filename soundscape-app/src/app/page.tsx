@@ -39,7 +39,7 @@ export default function Home() {
   const [useAI, setUseAI] = useState(true)
   const [showLayersPopup, setShowLayersPopup] = useState(false)
   const [showSearchTips, setShowSearchTips] = useState(false)
-  const [generatingTemplate, setGeneratingTemplate] = useState<string | null>(null)
+  const [generatingTemplates, setGeneratingTemplates] = useState<string[]>([])
   const isPlaying = useSoundscapeStore((state) => state.isPlaying)
   const togglePlayback = useSoundscapeStore((state) => state.togglePlayback)
   const reset = useSoundscapeStore((state) => state.reset)
@@ -55,7 +55,9 @@ export default function Home() {
 
   // Handle template click - Now generates soundscape directly
   const handleTemplateClick = async (template: string) => {
-    setGeneratingTemplate(template)
+    // Add this template to the generating list
+    setGeneratingTemplates((prev) => [...prev, template])
+
     try {
       // Call the simple soundscape generation API
       const response = await fetch("/api/generate-soundscape-simple", {
@@ -70,10 +72,7 @@ export default function Home() {
 
       const data = await response.json()
 
-      // Reset existing layers before adding new ones
-      reset()
-
-      // Fetch and add each layer
+      // Fetch and add each layer (don't reset - allow multiple templates)
       for (const layerSpec of data.soundscape.layers) {
         try {
           const soundResponse = await fetch(
@@ -109,7 +108,8 @@ export default function Home() {
     } catch (error) {
       console.error("Template generation error:", error)
     } finally {
-      setGeneratingTemplate(null)
+      // Remove this template from the generating list
+      setGeneratingTemplates((prev) => prev.filter((t) => t !== template))
     }
   }
 
@@ -281,70 +281,70 @@ export default function Home() {
                     iconColor="text-orange-500"
                     label="fire"
                     onClick={() => handleTemplateClick("fire")}
-                    isLoading={generatingTemplate === "fire"}
+                    isLoading={generatingTemplates.includes("fire")}
                   />
                   <TemplateIconButton
                     icon={CloudLightning}
                     iconColor="text-yellow-400"
                     label="storm"
                     onClick={() => handleTemplateClick("storm")}
-                    isLoading={generatingTemplate === "storm"}
+                    isLoading={generatingTemplates.includes("storm")}
                   />
                   <TemplateIconButton
                     icon={Coffee}
                     iconColor="text-amber-500"
                     label="cafe"
                     onClick={() => handleTemplateClick("cafe")}
-                    isLoading={generatingTemplate === "cafe"}
+                    isLoading={generatingTemplates.includes("cafe")}
                   />
                   <TemplateIconButton
                     icon={Flower2}
                     iconColor="text-rose-400"
                     label="meditation"
                     onClick={() => handleTemplateClick("meditation")}
-                    isLoading={generatingTemplate === "meditation"}
+                    isLoading={generatingTemplates.includes("meditation")}
                   />
                   <TemplateIconButton
                     icon={Rocket}
                     iconColor="text-pink-500"
                     label="space"
                     onClick={() => handleTemplateClick("space")}
-                    isLoading={generatingTemplate === "space"}
+                    isLoading={generatingTemplates.includes("space")}
                   />
                   <TemplateIconButton
                     icon={Moon}
                     iconColor="text-purple-400"
                     label="night"
                     onClick={() => handleTemplateClick("night")}
-                    isLoading={generatingTemplate === "night"}
+                    isLoading={generatingTemplates.includes("night")}
                   />
                   <TemplateIconButton
                     icon={Waves}
                     iconColor="text-blue-500"
                     label="ocean"
                     onClick={() => handleTemplateClick("ocean")}
-                    isLoading={generatingTemplate === "ocean"}
+                    isLoading={generatingTemplates.includes("ocean")}
                   />
                   <TemplateIconButton
                     icon={CloudRain}
                     iconColor="text-sky-400"
                     label="rain"
                     onClick={() => handleTemplateClick("rain")}
-                    isLoading={generatingTemplate === "rain"}
+                    isLoading={generatingTemplates.includes("rain")}
                   />
                   <TemplateIconButton
                     icon={TreePine}
                     iconColor="text-green-500"
                     label="forest"
                     onClick={() => handleTemplateClick("forest")}
-                    isLoading={generatingTemplate === "forest"}
+                    isLoading={generatingTemplates.includes("forest")}
                   />
                   <TemplateIconButton
                     icon={Building2}
                     iconColor="text-gray-400"
                     label="city"
                     onClick={() => handleTemplateClick("city")}
-                    isLoading={generatingTemplate === "city"}
+                    isLoading={generatingTemplates.includes("city")}
                   />
                 </div>
                 <p className="text-xs sm:text-sm text-slate-500">
