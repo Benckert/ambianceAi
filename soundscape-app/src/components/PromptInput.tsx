@@ -115,7 +115,7 @@ export const PromptInput = () => {
         <button
           type="submit"
           disabled={isLoading}
-          className="px-4 sm:px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-xl hover:from-cyan-600 hover:to-blue-600 disabled:from-slate-700 disabled:to-slate-700 disabled:cursor-not-allowed cursor-pointer transition-all flex items-center justify-center gap-2 font-medium shadow-lg shadow-cyan-500/25 disabled:shadow-none text-sm sm:text-base whitespace-nowrap w-[90px] sm:w-[140px]"
+          className="px-4 sm:px-6 py-3 rounded-xl text-white font-medium transition-all flex items-center justify-center gap-2 shadow-lg cursor-pointer text-sm sm:text-base whitespace-nowrap w-[90px] sm:w-[140px] bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 shadow-cyan-500/25 disabled:from-cyan-700/70 disabled:to-blue-700/70 disabled:cursor-wait disabled:shadow-none disabled:opacity-75"
         >
           {isLoading ? (
             <>

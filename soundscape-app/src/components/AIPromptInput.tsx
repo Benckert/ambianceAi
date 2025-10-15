@@ -228,7 +228,7 @@ export const AIPromptInput = ({ onClearTemplates }: AIPromptInputProps) => {
         <button
           type="submit"
           disabled={isGenerating}
-          className="px-4 sm:px-6 py-3 rounded-xl text-white font-medium transition-all flex items-center justify-center gap-2 shadow-lg cursor-pointer text-sm sm:text-base whitespace-nowrap w-[90px] sm:w-[140px] bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 shadow-indigo-500/25 disabled:from-slate-700 disabled:to-slate-700 disabled:cursor-not-allowed disabled:shadow-none"
+          className="px-4 sm:px-6 py-3 rounded-xl text-white font-medium transition-all flex items-center justify-center gap-2 shadow-lg cursor-pointer text-sm sm:text-base whitespace-nowrap w-[90px] sm:w-[140px] bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 shadow-indigo-500/25 disabled:from-indigo-700/70 disabled:to-purple-700/70 disabled:cursor-wait disabled:shadow-none disabled:opacity-75"
         >
           {isGenerating ? (
             <>
