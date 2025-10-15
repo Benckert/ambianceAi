@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { SoundscapePlayer } from "@/components/SoundscapePlayer"
 import { LayersPopup } from "@/components/LayersPopup"
 import { AIPromptInput } from "@/components/AIPromptInput"
@@ -57,6 +57,38 @@ export default function Home() {
       setAIKeywordsRef.current(template)
     }
   }
+
+  // Handle spacebar to toggle play/pause
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      // Only handle keyboard shortcuts if not in an input field
+      if (
+        e.target instanceof HTMLInputElement ||
+        e.target instanceof HTMLTextAreaElement
+      ) {
+        return
+      }
+
+      // Spacebar: toggle play/pause
+      if (e.code === "Space") {
+        e.preventDefault()
+        if (layers.length > 0) {
+          togglePlayback()
+        }
+      }
+
+      // Delete key: reset (clear all layers and stop playback)
+      if (e.code === "Delete") {
+        e.preventDefault()
+        if (layers.length > 0) {
+          reset()
+        }
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyPress)
+    return () => window.removeEventListener("keydown", handleKeyPress)
+  }, [layers.length, togglePlayback, reset])
 
   return (
     <main className="min-h-[calc(100vh+1px)] bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 pb-14">
