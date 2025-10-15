@@ -405,8 +405,7 @@ export default function Home() {
             <div className="flex-1 flex items-center gap-3 max-w-xs">
               <button
                 onClick={toggleMasterMute}
-                disabled={layers.length === 0}
-                className="text-slate-400 hover:text-white transition-colors cursor-pointer flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="text-slate-400 hover:text-white transition-colors cursor-pointer flex-shrink-0"
                 aria-label={
                   masterIsMuted ? "Unmute master volume" : "Mute master volume"
                 }
@@ -425,7 +424,6 @@ export default function Home() {
                 onValueChange={(value) => setMasterVolume(value[0] / 100)}
                 max={100}
                 step={1}
-                disabled={layers.length === 0}
                 className="flex-1"
               />
               <span className="hidden sm:inline text-xs text-slate-400 w-10 text-right">
