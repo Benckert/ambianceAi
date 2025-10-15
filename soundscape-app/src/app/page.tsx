@@ -36,25 +36,74 @@ import {
 
 export default function Home() {
   const [useAI, setUseAI] = useState(true)
-  const [aiUseTemplate, setAiUseTemplate] = useState(false)
   const [showLayersPopup, setShowLayersPopup] = useState(false)
-  const setAIKeywordsRef = useRef<((keywords: string) => void) | null>(null)
   const isPlaying = useSoundscapeStore((state) => state.isPlaying)
   const togglePlayback = useSoundscapeStore((state) => state.togglePlayback)
   const reset = useSoundscapeStore((state) => state.reset)
+  const addLayer = useSoundscapeStore((state) => state.addLayer)
   const layers = useSoundscapeStore((state) => state.layers)
   const masterVolume = useSoundscapeStore((state) => state.masterVolume)
   const masterIsMuted = useSoundscapeStore((state) => state.masterIsMuted)
   const setMasterVolume = useSoundscapeStore((state) => state.setMasterVolume)
   const toggleMasterMute = useSoundscapeStore((state) => state.toggleMasterMute)
 
-  // Determine current mode for instructions
-  const currentMode = !useAI ? "manual" : aiUseTemplate ? "template" : "ai"
+  // Determine current mode for instructions (now just manual or ai)
+  const currentMode = useAI ? "ai" : "manual"
 
-  // Handle template click
-  const handleTemplateClick = (template: string) => {
-    if (setAIKeywordsRef.current) {
-      setAIKeywordsRef.current(template)
+  // Handle template click - Now generates soundscape directly
+  const handleTemplateClick = async (template: string) => {
+    try {
+      // Call the simple soundscape generation API
+      const response = await fetch("/api/generate-soundscape-simple", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ keywords: template }),
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to generate soundscape")
+      }
+
+      const data = await response.json()
+
+      // Reset existing layers before adding new ones
+      reset()
+
+      // Fetch and add each layer
+      for (const layerSpec of data.soundscape.layers) {
+        try {
+          const soundResponse = await fetch(
+            `/api/freesound?query=${encodeURIComponent(layerSpec.searchQuery)}`
+          )
+
+          if (soundResponse.ok) {
+            const soundData = await soundResponse.json()
+
+            if (soundData.results && soundData.results.length > 0) {
+              const clip = soundData.results[0]
+              const hasLoopTag = clip.tags.some((tag: string) =>
+                tag.toLowerCase().includes("loop")
+              )
+
+              addLayer({
+                id: `template-layer-${clip.id}-${Date.now()}`,
+                url: clip.previews["preview-hq-mp3"],
+                volume: layerSpec.volume || 0.5,
+                loop: hasLoopTag,
+                name: clip.name,
+                duration: clip.duration,
+              })
+            }
+          }
+        } catch (err) {
+          console.error(
+            `Failed to fetch sound for layer: ${layerSpec.searchQuery}`,
+            err
+          )
+        }
+      }
+    } catch (error) {
+      console.error("Template generation error:", error)
     }
   }
 
@@ -122,9 +171,7 @@ export default function Home() {
           <p className="text-slate-400 text-sm sm:text-base md:text-lg px-4">
             Create ambient soundscapes with{" "}
             {currentMode === "manual"
-              ? "manual search"
-              : currentMode === "template"
-              ? "smart templates"
+              ? "manual search & templates"
               : "AI generation"}
           </p>
         </div>
@@ -171,34 +218,17 @@ export default function Home() {
 
         {/* Input Component */}
         <div className="mb-8">
-          {useAI ? (
-            <AIPromptInput
-              onModeChange={setAiUseTemplate}
-              setKeywordsRef={setAIKeywordsRef}
-            />
-          ) : (
-            <PromptInput />
-          )}
+          {useAI ? <AIPromptInput /> : <PromptInput />}
         </div>
 
         {/* Instructions */}
         <div className="bg-slate-800/40 backdrop-blur-md border border-slate-700/50 rounded-2xl p-4 sm:p-6">
           <h3
             className={`text-base sm:text-lg font-semibold mb-3 ${
-              currentMode === "manual"
-                ? "text-cyan-300"
-                : currentMode === "template"
-                ? "text-teal-400"
-                : "text-violet-400"
+              currentMode === "manual" ? "text-cyan-300" : "text-violet-400"
             }`}
           >
-            How to use{" "}
-            {currentMode === "manual"
-              ? "Manual Search"
-              : currentMode === "template"
-              ? "Template Mode"
-              : "AI Mode"}
-            :
+            How to use {currentMode === "manual" ? "Manual Search" : "AI Mode"}:
           </h3>
 
           {currentMode === "manual" && (
@@ -209,6 +239,7 @@ export default function Home() {
                   "wind")
                 </li>
                 <li>Click "Add Layer" on sounds you like</li>
+                <li>Or click a Quick Template below for instant soundscapes</li>
                 <li>Adjust volume sliders to balance your mix</li>
                 <li>Press Play to start your soundscape</li>
               </ol>
@@ -226,24 +257,15 @@ export default function Home() {
                   <li>• Mix different sound durations for best results</li>
                 </ul>
               </div>
-            </>
-          )}
 
-          {currentMode === "template" && (
-            <>
-              <ol className="list-decimal list-inside space-y-2 text-slate-300 text-sm sm:text-base">
-                <li>Type a scene keyword (see examples below)</li>
-                <li>Click Generate to create instant soundscape</li>
-                <li>Adjust volumes and add/remove layers as needed</li>
-                <li>Press Play to start your ambient experience</li>
-              </ol>
-              <div className="mt-3 p-3 bg-slate-700/20 rounded-xl border border-slate-600/30">
-                <p className="text-xs sm:text-sm font-semibold text-teal-400 mb-1 flex items-center gap-1.5">
+              {/* Quick Template Buttons */}
+              <div className="mt-3 p-3 bg-cyan-950/40 rounded-xl border border-cyan-600/50">
+                <p className="text-xs sm:text-sm font-semibold text-cyan-300 mb-1 flex items-center gap-1.5">
                   <Palette
                     size={14}
                     className="sm:w-4 sm:h-4"
                   />{" "}
-                  Available Templates:
+                  Quick Templates:
                 </p>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-x-3 gap-y-3 text-xs sm:text-sm text-slate-400 p-3">
                   <TemplateIconButton
@@ -308,7 +330,7 @@ export default function Home() {
                   />
                 </div>
                 <p className="text-xs sm:text-sm text-slate-500">
-                  Mix keywords like "rainy forest" or "peaceful ocean"
+                  Click any template to instantly generate a soundscape
                 </p>
               </div>
             </>
@@ -370,8 +392,6 @@ export default function Home() {
               className={`font-medium bg-gradient-to-r bg-clip-text text-transparent transition-all ${
                 currentMode === "manual"
                   ? "from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400"
-                  : currentMode === "template"
-                  ? "from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400"
                   : "from-indigo-500 to-purple-500 hover:from-indigo-400 hover:to-purple-400"
               }`}
             >

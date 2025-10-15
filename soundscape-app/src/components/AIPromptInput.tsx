@@ -1,24 +1,16 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react"
-import { Sparkles, Loader2, Palette, Bot, Lightbulb } from "lucide-react"
+import { useState, useRef } from "react"
+import { Sparkles, Loader2, Lightbulb } from "lucide-react"
 import { useSoundscapeStore } from "@/hooks/useSoundscapeStore"
 import { AILayerSpec, FreeSoundClip } from "@/types/soundscape"
 
-interface AIPromptInputProps {
-  onModeChange?: (isTemplate: boolean) => void
-  setKeywordsRef?: React.MutableRefObject<((keywords: string) => void) | null>
-}
-
-export const AIPromptInput = ({
-  onModeChange,
-  setKeywordsRef,
-}: AIPromptInputProps) => {
+// AI mode no longer needs props - it's standalone now
+export const AIPromptInput = () => {
   const [keywords, setKeywords] = useState("")
   const [isGenerating, setIsGenerating] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [generationStatus, setGenerationStatus] = useState<string>("")
-  const [useSimpleMode, setUseSimpleMode] = useState(false) // Default to AI mode
   const [showInfo, setShowInfo] = useState(false) // Info banner visibility
   const addLayer = useSoundscapeStore((state) => state.addLayer)
   const reset = useSoundscapeStore((state) => state.reset)
@@ -27,51 +19,10 @@ export const AIPromptInput = ({
   // Track last prompt to detect duplicates
   const lastPromptRef = useRef<string>("")
 
-  // Notify parent component when mode changes
-  useEffect(() => {
-    if (onModeChange) {
-      onModeChange(useSimpleMode)
-    }
-  }, [useSimpleMode, onModeChange])
+  // Remove mode change notification since we no longer have template mode
+  // AI mode is now the only mode in this component
 
-  // Expose setKeywords function to parent via ref
-  useEffect(() => {
-    if (setKeywordsRef) {
-      setKeywordsRef.current = (newKeyword: string) => {
-        setKeywords((prev) => {
-          const trimmedPrev = prev.trim()
-
-          // Don't add if keyword already exists in the input
-          // Split by whitespace and filter out empty strings
-          const existingKeywords = trimmedPrev
-            .split(/\s+/)
-            .filter((k) => k.length > 0)
-          if (existingKeywords.includes(newKeyword)) {
-            return prev
-          }
-
-          // If empty, add the keyword with trailing space
-          if (!trimmedPrev) {
-            return newKeyword + ' '
-          }
-
-          // If ends with space, add keyword with trailing space
-          if (prev.endsWith(" ")) {
-            return prev + newKeyword + ' '
-          }
-
-          // Otherwise add a space before the keyword and trailing space after
-          return prev + " " + newKeyword + ' '
-        })
-        inputRef.current?.focus()
-      }
-    }
-    return () => {
-      if (setKeywordsRef) {
-        setKeywordsRef.current = null
-      }
-    }
-  }, [setKeywordsRef])
+  // Remove setKeywordsRef logic - templates now generate directly without filling input
 
   const fetchSoundForLayer = async (
     layerSpec: AILayerSpec,
@@ -114,19 +65,13 @@ export const AIPromptInput = ({
     }
   }
 
-  const handleGenerate = async (
-    e: React.FormEvent,
-    forceTemplateMode = false
-  ) => {
+  const handleGenerate = async (e: React.FormEvent) => {
     e.preventDefault()
 
     if (!keywords.trim()) {
       inputRef.current?.focus()
       return
     }
-
-    // If forced to use template mode (after fallback), ensure it's set
-    const effectiveMode = forceTemplateMode ? true : useSimpleMode
 
     setIsGenerating(true)
     setError(null)
@@ -136,27 +81,17 @@ export const AIPromptInput = ({
     const shouldRandomize = isDuplicate
 
     if (shouldRandomize) {
-      setGenerationStatus(
-        effectiveMode
-          ? "🎲 Creating new variation..."
-          : "🎲 AI is creating a new variation..."
-      )
+      setGenerationStatus("🎲 AI is creating a new variation...")
     } else {
-      setGenerationStatus(
-        effectiveMode
-          ? "Creating soundscape template..."
-          : "AI is analyzing your keywords..."
-      )
+      setGenerationStatus("🤖 AI is analyzing your keywords...")
     }
 
     // Store this prompt for next time
     lastPromptRef.current = keywords.trim()
 
     try {
-      // Choose endpoint based on mode (use effective mode to respect forceTemplateMode)
-      const endpoint = effectiveMode
-        ? "/api/generate-soundscape-simple"
-        : "/api/generate-soundscape"
+      // Always use AI endpoint now (removed template mode)
+      const endpoint = "/api/generate-soundscape"
 
       // Step 1: Get AI structure
       const aiResponse = await fetch(endpoint, {
@@ -172,21 +107,11 @@ export const AIPromptInput = ({
         const errorData = await aiResponse.json().catch(() => ({}))
         console.error("API Error:", errorData)
 
-        // Check if we should auto-fallback to template mode
-        if (errorData.fallbackToTemplate && !effectiveMode) {
+        // Check if AI quota reached - fallback to manual mode (not template mode)
+        if (errorData.fallbackToTemplate) {
           setError(
-            "AI rate limit reached. Switching to Template mode and regenerating..."
+            "AI rate limit reached. Please switch to Manual Search mode or try again later."
           )
-
-          // Switch to template mode
-          setUseSimpleMode(true)
-
-          // Wait a moment, then automatically regenerate with template mode FORCED
-          setTimeout(() => {
-            setError(null)
-            // Recursively call handleGenerate WITH forceTemplateMode=true
-            handleGenerate(e, true)
-          }, 1500)
           return
         }
 
@@ -291,23 +216,15 @@ export const AIPromptInput = ({
             type="text"
             value={keywords}
             onChange={(e) => setKeywords(e.target.value)}
-            placeholder={
-              useSimpleMode
-                ? "Try: forest, rain, ocean, cafe..."
-                : "Describe your soundscape..."
-            }
-            className="w-full px-4 py-3 bg-slate-800/80 text-white rounded-xl border border-slate-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 placeholder:text-slate-500 backdrop-blur-sm text-sm sm:text-base"
+            placeholder="Describe your soundscape..."
+            className="w-full px-4 py-3 bg-slate-800/80 text-white rounded-xl border border-slate-700/50 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 placeholder:text-slate-500 backdrop-blur-sm text-sm sm:text-base"
             disabled={isGenerating}
           />
         </div>
         <button
           type="submit"
           disabled={isGenerating}
-          className={`px-4 sm:px-6 py-3 rounded-xl text-white font-medium transition-all flex items-center justify-center gap-2 shadow-lg cursor-pointer text-sm sm:text-base whitespace-nowrap w-[90px] sm:w-[140px] ${
-            useSimpleMode
-              ? "bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 shadow-emerald-500/25"
-              : "bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 shadow-indigo-500/25"
-          } disabled:from-slate-700 disabled:to-slate-700 disabled:cursor-not-allowed disabled:shadow-none`}
+          className="px-4 sm:px-6 py-3 rounded-xl text-white font-medium transition-all flex items-center justify-center gap-2 shadow-lg cursor-pointer text-sm sm:text-base whitespace-nowrap w-[90px] sm:w-[140px] bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 shadow-indigo-500/25 disabled:from-slate-700 disabled:to-slate-700 disabled:cursor-not-allowed disabled:shadow-none"
         >
           {isGenerating ? (
             <>
@@ -329,96 +246,39 @@ export const AIPromptInput = ({
         </button>
       </form>
 
-      {/* Mode Toggle */}
-      <div className="p-3 bg-slate-800/60 backdrop-blur-sm rounded-xl border border-slate-700/50">
-        <div className="flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2 sm:gap-3">
-            <span className="text-xs sm:text-sm text-slate-400">Mode:</span>
-            <button
-              type="button"
-              onClick={() => setUseSimpleMode(!useSimpleMode)}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-all cursor-pointer flex-shrink-0 ${
-                useSimpleMode
-                  ? "bg-gradient-to-r from-emerald-500 to-teal-500"
-                  : "bg-gradient-to-r from-indigo-500 to-purple-500"
-              }`}
-            >
-              <span
-                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform shadow-md ${
-                  useSimpleMode ? "translate-x-1" : "translate-x-6"
-                }`}
+      {/* Collapsible Info Banner */}
+      <div>
+        <button
+          type="button"
+          onClick={() => setShowInfo(!showInfo)}
+          className="w-full p-3 bg-indigo-950/30 border border-indigo-800/40 rounded-xl backdrop-blur-sm hover:bg-indigo-950/40 transition-colors cursor-pointer"
+        >
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <Lightbulb
+                size={14}
+                className="text-indigo-400 sm:w-4 sm:h-4 flex-shrink-0"
               />
-            </button>
-            <span
-              className={`text-xs sm:text-sm font-medium flex items-center gap-1.5 ${
-                useSimpleMode ? "text-teal-400" : "text-violet-400"
-              }`}
-            >
-              {useSimpleMode ? (
-                <>
-                  <Palette
-                    size={14}
-                    className="sm:w-4 sm:h-4 flex-shrink-0"
-                  />{" "}
-                  Template
-                </>
-              ) : (
-                <>
-                  <Bot
-                    size={14}
-                    className="sm:w-4 sm:h-4 flex-shrink-0"
-                  />{" "}
-                  AI
-                </>
-              )}
-            </span>
-          </div>
-          <p
-            className={`text-xs ${
-              useSimpleMode ? "text-teal-400" : "text-violet-400"
-            } hidden sm:block`}
-          >
-            {useSimpleMode
-              ? "Uses predefined templates (free)"
-              : "Uses OpenAI GPT-3.5 (cached & rate-limited)"}
-          </p>
-        </div>
-      </div>
-
-      {/* Collapsible Info Banner - Below form */}
-      {!useSimpleMode && (
-        <div>
-          <button
-            type="button"
-            onClick={() => setShowInfo(!showInfo)}
-            className="w-full p-3 bg-indigo-950/30 border border-indigo-800/40 rounded-xl backdrop-blur-sm hover:bg-indigo-950/40 transition-colors cursor-pointer"
-          >
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
-                <Lightbulb
-                  size={14}
-                  className="text-indigo-400 sm:w-4 sm:h-4 flex-shrink-0"
-                />
-                <span className="text-xs sm:text-sm text-indigo-300 font-medium">
-                  Smart Features Enabled
-                </span>
-              </div>
-              <span className="text-indigo-400 text-xs">
-                {showInfo ? "▼" : "▶"}
+              <span className="text-xs sm:text-sm text-indigo-300 font-medium">
+                AI Features & Limits
               </span>
             </div>
-          </button>
-          {showInfo && (
-            <div className="mt-2 p-3 bg-indigo-950/20 border border-indigo-800/30 rounded-xl backdrop-blur-sm">
-              <ul className="text-xs sm:text-sm text-indigo-400/70 space-y-0.5 list-disc list-inside">
-                <li>Responses cached for 24h (instant re-use)</li>
-                <li>Rate limited to 2 requests/min (stays under 3 RPM)</li>
-                <li>Auto-fallback to Template mode if limit reached</li>
-              </ul>
-            </div>
-          )}
-        </div>
-      )}
+            <span className="text-indigo-400 text-xs">
+              {showInfo ? "▼" : "▶"}
+            </span>
+          </div>
+        </button>
+        {showInfo && (
+          <div className="mt-2 p-3 bg-indigo-950/20 border border-indigo-800/30 rounded-xl backdrop-blur-sm">
+            <ul className="text-xs sm:text-sm text-indigo-400/70 space-y-0.5 list-disc list-inside">
+              <li>Uses OpenAI GPT-3.5 for natural language interpretation</li>
+              <li>Responses cached for 24h (instant re-use)</li>
+              <li>Rate limited to 2 requests/min</li>
+              <li>Switch to Manual Search if limit reached</li>
+            </ul>
+          </div>
+        )}
+      </div>
 
       {generationStatus && (
         <div className="p-4 bg-indigo-950/30 border border-indigo-800/50 rounded-xl text-indigo-300 text-sm backdrop-blur-sm">
