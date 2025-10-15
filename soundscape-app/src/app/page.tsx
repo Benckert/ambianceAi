@@ -192,14 +192,14 @@ export default function Home() {
                 <li>Press Play to start your ambient experience</li>
               </ol>
               <div className="mt-3 p-3 bg-emerald-950/30 rounded-xl border border-emerald-800/50">
-                <p className="text-xs sm:text-sm font-semibold text-emerald-300 mb-2 flex items-center gap-1.5">
+                <p className="text-xs sm:text-sm font-semibold text-emerald-300 mb-1 flex items-center gap-1.5">
                   <Palette
                     size={14}
                     className="sm:w-4 sm:h-4"
                   />{" "}
                   Available Templates:
                 </p>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 text-xs sm:text-sm text-slate-400 py-3">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-x-3 gap-y-3 text-xs sm:text-sm text-slate-400 p-3">
                   <TemplateIconButton
                     icon={Flame}
                     iconColor="text-orange-500"
@@ -261,7 +261,7 @@ export default function Home() {
                     onClick={() => handleTemplateClick("city")}
                   />
                 </div>
-                <p className="text-xs sm:text-sm text-slate-500 mt-2">
+                <p className="text-xs sm:text-sm text-slate-500">
                   Mix keywords like "rainy forest" or "peaceful ocean"
                 </p>
               </div>
