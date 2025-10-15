@@ -5,8 +5,11 @@ import { Sparkles, Loader2, Lightbulb } from "lucide-react"
 import { useSoundscapeStore } from "@/hooks/useSoundscapeStore"
 import { AILayerSpec, FreeSoundClip } from "@/types/soundscape"
 
-// AI mode no longer needs props - it's standalone now
-export const AIPromptInput = () => {
+interface AIPromptInputProps {
+  onClearTemplates?: () => void
+}
+
+export const AIPromptInput = ({ onClearTemplates }: AIPromptInputProps) => {
   const [keywords, setKeywords] = useState("")
   const [isGenerating, setIsGenerating] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -138,6 +141,7 @@ export const AIPromptInput = () => {
 
       // Step 2: Clear existing layers
       reset()
+      onClearTemplates?.() // Also clear clicked template buttons
 
       // Step 3: Fetch sounds for each layer (with duplicate prevention)
       let successCount = 0

@@ -262,7 +262,11 @@ export default function Home() {
 
         {/* Input Component */}
         <div className={useAI ? "mb-8" : ""}>
-          {useAI ? <AIPromptInput /> : <PromptInput />}
+          {useAI ? (
+            <AIPromptInput onClearTemplates={() => setClickedTemplates([])} />
+          ) : (
+            <PromptInput />
+          )}
         </div>
 
         {/* Search Tips - Only shown in Manual mode */}
