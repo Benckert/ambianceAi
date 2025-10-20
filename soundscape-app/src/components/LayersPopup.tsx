@@ -8,7 +8,7 @@ import { useEffect, useRef } from "react"
 interface LayersPopupProps {
   isOpen: boolean
   onClose: () => void
-  variant?: "manual" | "ai"
+  variant?: "manual" | "ai" | "semantic"
 }
 
 export const LayersPopup = ({
