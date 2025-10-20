@@ -363,9 +363,9 @@ export default function Home() {
                   <Brain size={14} className="sm:w-4 sm:h-4" /> Semantic Examples:
                 </p>
                 <ul className="text-xs sm:text-sm text-slate-400 space-y-1">
-                  <li>• "Early morning forest with fog and birds"</li>
-                  <li>• "Rainy city street with distant traffic"</li>
-                  <li>• "Cozy fireplace with soft wind outside"</li>
+                  <li>• "Forest Rain"</li>
+                  <li>• "Rainy forest"</li>
+                  <li>• "Cozy fireplace"</li>
                 </ul>
               </div>
             </>

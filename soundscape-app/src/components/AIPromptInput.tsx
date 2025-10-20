@@ -317,10 +317,11 @@ export const AIPromptInput = ({ onClearTemplates }: AIPromptInputProps) => {
         {showInfo && (
           <div className="mt-2 p-3 bg-indigo-950/20 border border-indigo-800/30 rounded-xl backdrop-blur-sm">
             <ul className="text-xs sm:text-sm text-indigo-400/70 space-y-0.5 list-disc list-inside">
-              <li>Uses OpenAI GPT-3.5 for natural language interpretation</li>
-              <li>Responses cached for 24h (instant re-use)</li>
-              <li>Rate limited to 2 requests/min</li>
-              <li>Switch to Manual Search if limit reached</li>
+              <li>Generative AI via <code>gpt-oss:120b</code> for creating ambient soundscapes</li>
+              <li>Generates structured JSON for multiple audio layers (background, midground, foreground)</li>
+              <li>Responses cached for 24h for faster reuse</li>
+              <li>Rate limited to 2 requests/min — switch to Manual Search if limit is reached</li>
+              <li>Supports optional randomness to vary volume and layer selection</li>
             </ul>
           </div>
         )}
@@ -337,18 +338,6 @@ export const AIPromptInput = ({ onClearTemplates }: AIPromptInputProps) => {
           {error}
         </div>
       )}
-
-      <div className="text-xs text-slate-500 space-y-1">
-        <p>
-          <strong>Pro tip:</strong> Be descriptive! Examples:
-        </p>
-        <ul className="list-disc list-inside ml-4 space-y-1 text-slate-600">
-          <li>"Rainy forest night with distant thunder"</li>
-          <li>"Peaceful ocean beach sunset with seagulls"</li>
-          <li>"Cozy coffee shop ambience with light chatter"</li>
-          <li>"Mystical cave with water drips and wind"</li>
-        </ul>
-      </div>
     </div>
   )
 }
