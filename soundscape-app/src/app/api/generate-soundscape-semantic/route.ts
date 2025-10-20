@@ -1,6 +1,5 @@
 // API-route: Semantisk sökning med embeddings
 // Denna route tar emot en textprompt och returnerar liknande ljud/soundscapes baserat på embeddings.
-// För VG: Visa på skicklighet med AI och reflektera kring teknikval i README.
 //
 // Funktion:
 // 1. Tar emot en prompt från användaren (POST-request)
