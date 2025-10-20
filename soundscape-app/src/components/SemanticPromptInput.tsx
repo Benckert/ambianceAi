@@ -29,7 +29,7 @@ export const SemanticPromptInput = () => {
     setResults([]);
 
     try {
-      const response = await fetch("/api/search-embeddings", {
+      const response = await fetch("/api/generate-soundscape-semantic", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ prompt }),
